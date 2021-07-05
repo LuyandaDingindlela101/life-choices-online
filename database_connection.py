@@ -1,27 +1,28 @@
+from datetime import datetime
+
 import mysql.connector
 
-my_db = mysql.connector.connect(user='sql10423065', password='LGq9PVR277', host='sql10.freesqldatabase.com',
-                                database='sql10423065', auth_plugin='mysql_native_password')
+my_db = mysql.connector.connect(user='sql10423065', password='LGq9PVR277', host='sql10.freesqldatabase.com', database='sql10423065', auth_plugin='mysql_native_password')
 
 
+#   ID_NUMBER AND PHONE_NUMBER MUST BE A STRING
 def create_visitors_table():
     query = "CREATE TABLE visitors ( " \
             "id int unsigned NOT NULL auto_increment, " \
             "name varchar(50) NOT NULL, " \
             "surname varchar(50) NOT NULL, " \
-            "id_number int NOT NULL, " \
-            "phone_number int NOT NULL, " \
-            "nok_id int unsigned NOT NULL, " \
+            "id_number varchar(13) NOT NULL, " \
+            "phone_number varchar(10) NOT NULL, " \
             "logged_in tinyint NOT NULL, " \
-            "time_in datetime NOT NULL, " \
-            "time_out datetime NOT NULL, " \
-            "PRIMARY KEY (id), " \
-            "FOREIGN KEY (nok_id) REFERENCES next_of_kin(id) ); "
+            "time_in varchar(50) NOT NULL, " \
+            "time_out varchar(50) NOT NULL, " \
+            "PRIMARY KEY (id) ); "
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
 
 
+# MAKE VISITOR ID FOREIGN KEY
 def create_admins_table():
     #     IF THE TABLE DOESNT EXIST, CREATE IT
     query = "CREATE TABLE admins ( " \
@@ -29,19 +30,38 @@ def create_admins_table():
             "name varchar(50) NOT NULL, " \
             "email varchar(50) NOT NULL, " \
             "password varchar(50) NOT NULL, " \
-            "PRIMARY KEY (id) ); "
+            "visitor_id int unsigned NOT NULL, " \
+            "PRIMARY KEY (id), " \
+            "FOREIGN KEY (visitor_id) REFERENCES visitors(id) ); "
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
 
 
 def create_nok_table():
-    #     IF THE TABLE DOESNT EXIST, CREATE IT
     query = "CREATE TABLE next_of_kin ( " \
             "id int unsigned NOT NULL auto_increment, " \
             "name varchar(50) NOT NULL, " \
-            "phone_number int NOT NULL, " \
-            "PRIMARY KEY (id) ); "
+            "phone_number varchar(10) NOT NULL, " \
+            "visitor_id int unsigned NOT NULL, " \
+            "PRIMARY KEY (id), " \
+            "FOREIGN KEY (visitor_id) REFERENCES visitors(id) ); "
+
+    my_cursor = my_db.cursor()
+    my_cursor.execute(query)
+
+
+def insert_visitor(name, surname, id_number, phone_number, logged_in, time_in):
+    query = "INSERT INTO visitors ( name ,surname ,id_number ,phone_number ,logged_in ,time_in ) " \
+            "VALUES ( '" + name + "', '" + surname + "', '" + id_number + "', '" + phone_number + "', '" + str(logged_in) + "', '" + time_in + "' );"
+
+    my_cursor = my_db.cursor()
+    my_cursor.execute(query)
+
+
+def insert_nok(name, phone_number, visitor_id):
+    query = "INSERT INTO next_of_kin ( name ,phone_number, visitor_id ) " \
+            "VALUES ( '" + name + "', '" + phone_number + "', '" + str(visitor_id) + "' );"
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
@@ -55,9 +75,9 @@ def read_database():
         print(i)
 
 
-def describe_database():
+def describe_table(table_name):
     my_cursor = my_db.cursor()
-    my_cursor.execute('DESCRIBE visitors')
+    my_cursor.execute('DESCRIBE ' + table_name)
 
     for i in my_cursor:
         print(i)
@@ -71,10 +91,23 @@ def show_tables():
         print(i)
 
 
-# def drop_table():
-#     my_cursor = my_db.cursor()
-#     my_cursor.execute('DROP TABLE visitors')
+def drop_table(table_name):
+    my_cursor = my_db.cursor()
+    my_cursor.execute('DROP TABLE ' + table_name)
 
 
+# drop_table("admins")
+# drop_table("next_of_kin")
+# drop_table("visitors")
+#
+# create_visitors_table()
+# create_admins_table()
+# create_nok_table()
 
-show_tables()
+# show_tables()
+# TEST INSERT STATEMENT
+# now = datetime.now()
+# insert_visitor("Luyanda", "Dingindlela", "9903155793082", "0740285889", 1, str(now))
+insert_nok("Khaya", "0783820098", 1)
+read_database()
+
