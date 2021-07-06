@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import mysql.connector
 
 my_db = mysql.connector.connect(user='sql10423065', password='LGq9PVR277', host='sql10.freesqldatabase.com', database='sql10423065', auth_plugin='mysql_native_password')
@@ -15,11 +13,13 @@ def create_visitors_table():
             "phone_number varchar(10) NOT NULL, " \
             "logged_in tinyint NOT NULL, " \
             "time_in varchar(50) NOT NULL, " \
-            "time_out varchar(50) NOT NULL, " \
+            "time_out varchar(50) DEFAULT 'null' NOT NULL, " \
             "PRIMARY KEY (id) ); "
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
+
+    my_db.commit()
 
 
 # MAKE VISITOR ID FOREIGN KEY
@@ -30,12 +30,12 @@ def create_admins_table():
             "name varchar(50) NOT NULL, " \
             "email varchar(50) NOT NULL, " \
             "password varchar(50) NOT NULL, " \
-            "visitor_id int unsigned NOT NULL, " \
-            "PRIMARY KEY (id), " \
-            "FOREIGN KEY (visitor_id) REFERENCES visitors(id) ); "
+            "PRIMARY KEY (id) ); "
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
+
+    my_db.commit()
 
 
 def create_nok_table():
@@ -58,6 +58,8 @@ def insert_visitor(name, surname, id_number, phone_number, logged_in, time_in):
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
 
+    my_db.commit()
+
 
 def insert_nok(name, phone_number, visitor_id):
     query = "INSERT INTO next_of_kin ( name ,phone_number, visitor_id ) " \
@@ -66,10 +68,20 @@ def insert_nok(name, phone_number, visitor_id):
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
 
+    my_db.commit()
 
-def read_database():
+def insert_admin(name, email, password):
+    query = "INSERT INTO admins ( name ,email ,password ) " \
+            "VALUES ( '" + name + "', '" + email + "', '" + password + "' );"
+
     my_cursor = my_db.cursor()
-    my_cursor.execute('SELECT * FROM visitors')
+    my_cursor.execute(query)
+
+    my_db.commit()
+
+def read_table(table_name):
+    my_cursor = my_db.cursor()
+    my_cursor.execute('SELECT * FROM ' + table_name)
 
     for i in my_cursor:
         print(i)
@@ -94,20 +106,3 @@ def show_tables():
 def drop_table(table_name):
     my_cursor = my_db.cursor()
     my_cursor.execute('DROP TABLE ' + table_name)
-
-
-# drop_table("admins")
-# drop_table("next_of_kin")
-# drop_table("visitors")
-#
-# create_visitors_table()
-# create_admins_table()
-# create_nok_table()
-
-# show_tables()
-# TEST INSERT STATEMENT
-# now = datetime.now()
-# insert_visitor("Luyanda", "Dingindlela", "9903155793082", "0740285889", 1, str(now))
-insert_nok("Khaya", "0783820098", 1)
-read_database()
-
