@@ -33,21 +33,6 @@ def validate_entries(name, id_number):
         messagebox.showerror("Validation Error", "Please check your ID Number")
 
 
-#   FUNCTION WILL CHECK IF USER EXISTS IN THE DATABASE
-def user_exists(name, id_number):
-    # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE
-    query = "SELECT * FROM visitors WHERE name='" + name + "' AND id_number='" + id_number + "';"
-    #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
-    db_rows = select_from_table(query)
-
-    #   CHECK IF THE LENGTH OF db_rows IS MORE THAN 0, IF YES THEN THE USER EXISTS
-    if len(db_rows) > 0:
-        return True
-    #   IF NO, THEN THE USER DOESNT EXIST
-    else:
-        return False
-
-
 #   FUNCTION WILL SIGN A USER IN IF ENTRIES PASS VALIDATION AND USER EXISTS IN DATABASE
 def sign_user_in():
     try:
@@ -62,7 +47,7 @@ def sign_user_in():
                 messagebox.showinfo("Login successful", "You have successfully logged in")
                 #   IF USER EXISTS, DESTROY THE CURRENT WINDOW AND LOG THEM IN
                 window.destroy()
-                # import logged_in
+                import logged_in
             #     IF USER DOESNT EXIST...
             else:
                 #   ASK IF THEY WANT TO REGISTER

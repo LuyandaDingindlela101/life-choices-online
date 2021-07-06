@@ -1,7 +1,9 @@
 from tkinter import END, messagebox
 
-
 #   FUNCTION CLEARS ALL THE ENTRIES CONTENTS
+from database_connection import select_from_table
+
+
 def clear_entry(test_entry):
     test_entry.delete(0, END)
 
@@ -41,3 +43,17 @@ def exit_program(window):
 
     #   ELSE, JUST GO BACK TO THE APPLICATION SCREEN
 
+
+#   FUNCTION WILL CHECK IF USER EXISTS IN THE DATABASE
+def user_exists(name, id_number):
+    # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE
+    query = "SELECT * FROM visitors WHERE name='" + name + "' AND id_number='" + id_number + "';"
+    #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
+    db_rows = select_from_table(query)
+
+    #   CHECK IF THE LENGTH OF db_rows IS MORE THAN 0, IF YES THEN THE USER EXISTS
+    if len(db_rows) > 0:
+        return True
+    #   IF NO, THEN THE USER DOESNT EXIST
+    else:
+        return False

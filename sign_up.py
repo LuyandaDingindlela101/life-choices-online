@@ -34,6 +34,7 @@ def validate_entries(name, surname, id_number, phone_number, nok_name, nok_phone
 
 def sign_user_up():
     try:
+        #   GET THE VALUES OF THE INPUTS
         name = name_entry.get()
         surname = surname_entry.get()
         id_number = id_number_entry.get()
@@ -41,22 +42,37 @@ def sign_user_up():
         nok_name = nok_name_entry.get()
         nok_phone_number = nok_phone_number_entry.get()
 
+        #   CALL THE validate_entries FUNCTION AND PASS IN ALL THE ENTRIES
         if validate_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
+            #   IF VALIDATION PASSES, CALL THE id_valid FUNCTION AND PASS IN THE id_number
             if id_valid(id_number):
-                visitor_id = ""
-                time_in = datetime.now()
-                insert_visitor(name, surname, id_number, phone_number, 1, time_in)
+                #       ONCE THE id_number IS VALID, WE CHECK IF THE USER DOESNT EXIST ALREADY IN THE DATABASE
+                if not user_exists(name, id_number):
+                    visitor_id = ""
+                    time_in = datetime.now()
+                    #   CALL THE insert_visitor FUNCTION AND PASS IN THE NEEDED PARAMETERS
+                    insert_visitor(name, surname, id_number, phone_number, 1, time_in)
 
-                # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE
-                query = "SELECT id FROM visitors WHERE name='" + name + "' AND id_number='" + id_number + "';"
-                #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
-                db_rows = select_from_table(query)
-                for i in db_rows[0]:
-                    visitor_id = i
+                    # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE SO WE KNOW WHICH visitor TO ASSIGN THE NEXT OF KIN TO
+                    query = "SELECT id FROM visitors WHERE name='" + name + "' AND id_number='" + id_number + "';"
+                    #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
+                    db_rows = select_from_table(query)
+                    #   HERE, WE LOOP THROUGH THE SET AT THE 0 INDEX TO GET THE VALUE OF THE id
+                    for i in db_rows[0]:
+                        visitor_id = i
 
-                insert_nok(nok_name, nok_phone_number, visitor_id)
+                    #   SAVE THE NEXT OF KIN WITH THE CORRECT visitor_id
+                    insert_nok(nok_name, nok_phone_number, visitor_id)
 
-                # import logged_in
+                    #   DESTROY THE CURRENT WINDOW AND LOG THEM IN
+                    window.destroy()
+                    import logged_in
+                #     IF THE USER EXISTS IN THE DATABASE, ALLOW THEM TO GO SIGN IN
+                else:
+                    #   DESTROY THE CURRENT WINDOW AND IMPORT THE sign_in WINDOW
+                    messagebox.showinfo("User exists", "Please go login.")
+                    window.destroy()
+                    import sign_in
     except ValueError:
         messagebox.showerror("Validation error", "Please check your entries")
 
