@@ -1,6 +1,8 @@
+from datetime import datetime
 from tkinter import *
 from utilities import *
 from tkinter import messagebox
+from database_connection import *
 
 
 window = Tk()
@@ -9,15 +11,8 @@ window.geometry("500x550")
 
 
 #   FUNCTION WILL VALIDATE ALL ENTRIES BY CHECKING CONTENTS AND DATA TYPES
-def validate_entries():
+def validate_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
     try:
-        name = name_entry.get()
-        surname = surname_entry.get()
-        id_number = id_number_entry.get()
-        phone_number = phone_number_entry.get()
-        nok_name = nok_name_entry.get()
-        nok_phone_number = nok_phone_number_entry.get()
-
         #   CHECK IF ALL THE ENTRIES ARE EMPTY
         if not_empty(name) and not_empty(surname) and not_empty(id_number) and not_empty(phone_number) and not_empty(nok_name) and not_empty(nok_phone_number):
             #   CHECK IF THE id_number_entry AND phone_number_entry ARE NUMBERS
@@ -38,8 +33,32 @@ def validate_entries():
 
 
 def sign_user_up():
-    if validate_entries():
-        print("values are correct")
+    try:
+        name = name_entry.get()
+        surname = surname_entry.get()
+        id_number = id_number_entry.get()
+        phone_number = phone_number_entry.get()
+        nok_name = nok_name_entry.get()
+        nok_phone_number = nok_phone_number_entry.get()
+
+        if validate_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
+            if id_valid(id_number):
+                visitor_id = ""
+                time_in = datetime.now()
+                insert_visitor(name, surname, id_number, phone_number, 1, time_in)
+
+                # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE
+                query = "SELECT id FROM visitors WHERE name='" + name + "' AND id_number='" + id_number + "';"
+                #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
+                db_rows = select_from_table(query)
+                for i in db_rows[0]:
+                    visitor_id = i
+
+                insert_nok(nok_name, nok_phone_number, visitor_id)
+
+                # import logged_in
+    except ValueError:
+        messagebox.showerror("Validation error", "Please check your entries")
 
 
 canvas = Canvas(window, width=450, height=100)

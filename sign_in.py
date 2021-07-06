@@ -1,8 +1,7 @@
 from tkinter import *
-
-from database_connection import *
 from utilities import *
 from tkinter import messagebox
+from database_connection import *
 
 window = Tk()
 window.title("Life Choices Online")
@@ -60,9 +59,10 @@ def sign_user_in():
         if validate_entries(name, id_number):
             #   IF VALIDATION PASSES, CALL THE user_exists FUNCTION AND PASS IN THE name AND id_number ENTRIES
             if user_exists(name, id_number):
+                messagebox.showinfo("Login successful", "You have successfully logged in")
                 #   IF USER EXISTS, DESTROY THE CURRENT WINDOW AND LOG THEM IN
                 window.destroy()
-                import logged_in
+                # import logged_in
             #     IF USER DOESNT EXIST...
             else:
                 #   ASK IF THEY WANT TO REGISTER

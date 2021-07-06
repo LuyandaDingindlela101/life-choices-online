@@ -53,7 +53,7 @@ def create_nok_table():
 
 def insert_visitor(name, surname, id_number, phone_number, logged_in, time_in):
     query = "INSERT INTO visitors ( name ,surname ,id_number ,phone_number ,logged_in ,time_in ) " \
-            "VALUES ( '" + name + "', '" + surname + "', '" + id_number + "', '" + phone_number + "', '" + str(logged_in) + "', '" + time_in + "' );"
+            "VALUES ( '" + name + "', '" + surname + "', '" + id_number + "', '" + phone_number + "', '" + str(logged_in) + "', '" + str(time_in) + "' );"
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
@@ -114,8 +114,8 @@ def select_from_table(query):
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
 
-    rows = my_cursor.fetchall()
-    # for i in my_cursor:
-    #     print(i)
+    return my_cursor.fetchall()
 
-    return rows
+
+read_table("visitors")
+read_table("next_of_kin")
