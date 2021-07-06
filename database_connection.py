@@ -70,6 +70,7 @@ def insert_nok(name, phone_number, visitor_id):
 
     my_db.commit()
 
+
 def insert_admin(name, email, password):
     query = "INSERT INTO admins ( name ,email ,password ) " \
             "VALUES ( '" + name + "', '" + email + "', '" + password + "' );"
@@ -78,6 +79,7 @@ def insert_admin(name, email, password):
     my_cursor.execute(query)
 
     my_db.commit()
+
 
 def read_table(table_name):
     my_cursor = my_db.cursor()
@@ -106,3 +108,14 @@ def show_tables():
 def drop_table(table_name):
     my_cursor = my_db.cursor()
     my_cursor.execute('DROP TABLE ' + table_name)
+
+
+def select_from_table(query):
+    my_cursor = my_db.cursor()
+    my_cursor.execute(query)
+
+    rows = my_cursor.fetchall()
+    # for i in my_cursor:
+    #     print(i)
+
+    return rows

@@ -10,12 +10,12 @@ canvas.place(x=10, y=10)
 
 def navigate_to_sign_up():
     window.destroy()
-    import sign_up_page
+    import sign_up
 
 
 def navigate_to_sign_in():
     window.destroy()
-    import sign_in_page
+    import sign_in
 
 img = PhotoImage(file="./images/logo.png")
 canvas.create_image(20, 20, anchor=NW, image=img)

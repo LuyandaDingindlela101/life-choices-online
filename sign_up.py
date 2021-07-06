@@ -14,14 +14,14 @@ def validate_entries():
         name = name_entry.get()
         surname = surname_entry.get()
         id_number = id_number_entry.get()
-        phone_number = int(phone_number_entry.get())
+        phone_number = phone_number_entry.get()
         nok_name = nok_name_entry.get()
-        nok_phone_number = int(nok_phone_number_entry.get())
+        nok_phone_number = nok_phone_number_entry.get()
 
         #   CHECK IF ALL THE ENTRIES ARE EMPTY
         if not_empty(name) and not_empty(surname) and not_empty(id_number) and not_empty(phone_number) and not_empty(nok_name) and not_empty(nok_phone_number):
             #   CHECK IF THE id_number_entry AND phone_number_entry ARE NUMBERS
-            if len(id_number) == 13 and len(str(phone_number)) == 10 and len(str(nok_phone_number)) == 10:
+            if len(id_number) == 13 and len(phone_number) == 10 and len(nok_phone_number) == 10:
                 #   CHECK IF THE ID NUMBER IS VALID
                 if not id_valid(id_number):
                     messagebox.showerror("Validation Error", "Your ID Number is invalid")
@@ -48,7 +48,7 @@ canvas.place(x=10, y=10)
 img = PhotoImage(file="./images/logo.png")
 canvas.create_image(20, 20, anchor=NW, image=img)
 
-heading_label = Label(window, text="Your details!", fg="#8dc63f", font=("Helvetica", 18))
+heading_label = Label(window, text="SIGN UP!", fg="#8dc63f", font=("Helvetica", 18))
 heading_label.place(x=150, y=150)
 
 name_label = Label(window, text="Please enter name!", fg="#8dc63f", font="Helvetica")
