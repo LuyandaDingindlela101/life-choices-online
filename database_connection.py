@@ -52,6 +52,7 @@ def create_nok_table():
 
 
 def insert_visitor(name, surname, id_number, phone_number, logged_in, time_in):
+    #   logged_in WILL HAVE ONLY TWO VALUES: 1 AND 0, 1 MEANS LOGGED IN AND 0 MEANS LOGGED OUT
     query = "INSERT INTO visitors ( name ,surname ,id_number ,phone_number ,logged_in ,time_in ) " \
             "VALUES ( '" + name + "', '" + surname + "', '" + id_number + "', '" + phone_number + "', '" + str(logged_in) + "', '" + str(time_in) + "' );"
 
@@ -81,12 +82,21 @@ def insert_admin(name, email, password):
     my_db.commit()
 
 
+def delete_entry(table_name, column_name, id):
+    query = "DELETE FROM " + table_name + " WHERE " + column_name + " = " + id + ";"
+    print(query)
+
+    my_cursor = my_db.cursor()
+    my_cursor.execute(query)
+
+    my_db.commit()
+
+
 def read_table(table_name):
     my_cursor = my_db.cursor()
     my_cursor.execute('SELECT * FROM ' + table_name)
 
-    for i in my_cursor:
-        print(i)
+    return my_cursor.fetchall()
 
 
 def describe_table(table_name):
@@ -115,7 +125,3 @@ def select_from_table(query):
     my_cursor.execute(query)
 
     return my_cursor.fetchall()
-
-
-read_table("visitors")
-read_table("next_of_kin")

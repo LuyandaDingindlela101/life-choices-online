@@ -1,7 +1,5 @@
 from tkinter import *
 from utilities import *
-from tkinter import messagebox
-from database_connection import *
 
 window = Tk()
 window.title("Life Choices Online")
