@@ -82,9 +82,15 @@ def insert_admin(name, email, password):
     my_db.commit()
 
 
+def update_table(query):
+    my_cursor = my_db.cursor()
+    my_cursor.execute(query)
+
+    my_db.commit()
+
+
 def delete_entry(table_name, column_name, id):
     query = "DELETE FROM " + table_name + " WHERE " + column_name + " = " + id + ";"
-    print(query)
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
@@ -111,8 +117,7 @@ def show_tables():
     my_cursor = my_db.cursor()
     my_cursor.execute('SHOW TABLES')
 
-    for i in my_cursor:
-        print(i)
+    return my_cursor.fetchall()
 
 
 def drop_table(table_name):
