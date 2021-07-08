@@ -9,6 +9,9 @@ from tkinter.ttk import Style, Treeview
 window = Tk()
 window.geometry("1100x550")
 window.title("Life Choices Online")
+# here we are binding keyboard
+# with the main window
+
 
 #   ADD STYLES TO TREEVIEW
 style = Style()
