@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import Style, Treeview
-from database_connection import read_table, delete_entry, select_from_table
+from database_connection import read_table, delete_entry, select_from_table, update_table
 
 window = Tk()
 window.geometry("1100x550")
@@ -10,6 +10,8 @@ window.title("Life Choices Online")
 
 #   FUNCTION WILL POPULATE THE TREEVIEW WITH ALL THE USERS
 def populate_treeview():
+    #   DELETE ALL THE CHILDREN OF THE TREEVIEW
+    tree_view.delete(*tree_view.get_children())
     #   Index WILL KEEP TRACK OF EACH TREEVIEW ITEM
     index = 0
     #   GET ALL THE RECORDS IN THE visitors TABLE
@@ -38,7 +40,7 @@ def delete_row():
         messagebox.showerror("Entry not chosen", "Please select an entry above")
 
 
-def populate_entries(name_entry, surname_entry, id_number_entry, phone_number_entry, nok_name_entry, nok_phone_number_entry):
+def populate_entries():
     try:
         #   GET THE ID OF THE SELECTED ITEM
         selected_id = tree_view.focus()
@@ -47,8 +49,6 @@ def populate_entries(name_entry, surname_entry, id_number_entry, phone_number_en
         #   GET THE visitor NEXT OF KIN
         nok_query = "SELECT name, phone_number FROM next_of_kin WHERE visitor_id = " + visitor[0]
         nok = select_from_table(nok_query)[0]
-        print(nok)
-        print(visitor)
 
         #   POPULATE THE ENTRIES WITH THE visitor DETAILS
         name_entry.insert(0, visitor[1])
@@ -57,14 +57,48 @@ def populate_entries(name_entry, surname_entry, id_number_entry, phone_number_en
         phone_number_entry.insert(0, visitor[4])
 
         #   POPULATE THE ENTRIES WITH THE NEXT OF KIN DETAILS
-        nok_name_entry.insert(0, visitor[0])
-        nok_phone_number_entry.insert(0, visitor[1])
+        nok_name_entry.insert(0, nok[0])
+        nok_phone_number_entry.insert(0, nok[1])
 
     except IndexError:
         messagebox.showerror("Entry not chosen", "Please select an entry above")
 
 
-def edit_visitor(name, surname, id_number, phone_number):
+def edit_visitor():
+    #   GET THE ID OF THE SELECTED ITEM
+    selected_id = tree_view.focus()
+    #   GET THE ACTUAL ITEMS VALUES
+    visitor = tree_view.item(selected_id, 'values')
+    #   GET THE visitor NEXT OF KIN
+    nok_query = "SELECT name, phone_number FROM next_of_kin WHERE visitor_id = " + visitor[0]
+    nok = select_from_table(nok_query)[0]
+
+    #   GET THE visitor DETAILS FROM THE ENTRIES
+    name = name_entry.get()
+    surname = surname_entry.get()
+    id_number = id_number_entry.get()
+    phone_number = phone_number_entry.get()
+    visitor_id = visitor[0]
+
+    #   GET THE nok DETAILS FROM THE ENTRIES
+    nok_name = nok_name_entry.get()
+    nok_phone_number = nok_phone_number_entry.get()
+
+    #   QUERY TO UPDATE THE visitors TABLE
+    query = "UPDATE visitors SET name = '" + name + "', surname = '" + surname + "', id_number = '" + id_number + "', phone_number = '" + phone_number + "' WHERE id = " + visitor_id
+    update_table(query)
+
+    #   QUERY TO UPDATE THE next_of_kin TABLE
+    nok_query = "UPDATE next_of_kin SET name = '" + nok_name + "', phone_number = '" + nok_phone_number + "' WHERE visitor_id = " + visitor_id
+    update_table(nok_query)
+
+    #   REPOPULATE THE TREEVIEW
+    populate_treeview()
+    #   RESIZE THE WINDOW
+    window.geometry("1100x500")
+
+
+def add_users():
     pass
 
 
@@ -73,55 +107,30 @@ def edit_row():
     try:
         #   MAKE SPACE FOR THE NEW WIDGETS BY INCREASING THE WINDOWS LENGTH
         window.geometry("1100x1000")
-        #   CRETE THE NEW WIDGETS
-        hr_label = Label(window,
-                         text="____________________________________________________________________________________________________________________________________________________",
-                         fg="#8dc63f")
+        #   PLACE THE WIDGETS SO THEY CAN BE SEEN
+
         hr_label.place(x=10, y=500)
-
-        edit_label = Label(window, text="Edit entry!", fg="#8dc63f", font=("Helvetica", 18))
         edit_label.place(x=400, y=550)
-
-        name_label = Label(window, text="Please enter name!", fg="#8dc63f", font="Helvetica")
         name_label.place(x=10, y=600)
-        name_entry = Entry(window)
         name_entry.place(x=10, y=620)
-
-        surname_label = Label(window, text="Please enter surname!", fg="#8dc63f", font="Helvetica")
         surname_label.place(x=250, y=600)
-        surname_entry = Entry(window)
         surname_entry.place(x=250, y=620)
-
-        id_number_label = Label(window, text="Please enter ID Number!", fg="#8dc63f", font="Helvetica")
         id_number_label.place(x=500, y=600)
-        id_number_entry = Entry(window)
         id_number_entry.place(x=500, y=620)
 
-        phone_number_label = Label(window, text="Please enter phone number!", fg="#8dc63f", font="Helvetica")
         phone_number_label.place(x=750, y=600)
-        phone_number_entry = Entry(window)
         phone_number_entry.place(x=750, y=620)
-
-        nok_label = Label(window, text="Next of kin details!", fg="#8dc63f", font=("Helvetica", 18))
         nok_label.place(x=400, y=700)
-
-        nok_name_label = Label(window, text="Please enter name!", fg="#8dc63f", font="Helvetica")
         nok_name_label.place(x=10, y=750)
-        nok_name_entry = Entry(window)
         nok_name_entry.place(x=10, y=780)
 
-        nok_phone_number_label = Label(window, text="Please enter phone number!", fg="#8dc63f", font="Helvetica")
         nok_phone_number_label.place(x=250, y=750)
-        nok_phone_number_entry = Entry(window)
         nok_phone_number_entry.place(x=250, y=780)
 
-        edit_visitor_btn = Button(window, text="Update visitor", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30,
-                                  command=edit_visitor)
         edit_visitor_btn.place(x=10, y=850)
 
         #   CALL THE populate_entries FUNCTION TO POPULATE THE ENTRIES WITH THE VISITOR AND NEXT OF KIN DETAILS
-        populate_entries(name_entry, surname_entry, id_number_entry, phone_number_entry, nok_name_entry,
-                         nok_phone_number_entry)
+        populate_entries()
     except IndexError:
         messagebox.showerror("Entry not chosen", "Please select an entry above")
 
@@ -178,5 +187,34 @@ edit_btn.place(x=380, y=450)
 
 delete_btn = Button(window, text="DELETE VISITOR", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=delete_row)
 delete_btn.place(x=775, y=450)
+
+hr_label = Label(window,
+                 text="____________________________________________________________________________________________________________________________________________________",
+                 fg="#8dc63f")
+
+edit_label = Label(window, text="Edit entry!", fg="#8dc63f", font=("Helvetica", 18))
+
+name_label = Label(window, text="Please enter name!", fg="#8dc63f", font="Helvetica")
+name_entry = Entry(window)
+
+surname_label = Label(window, text="Please enter surname!", fg="#8dc63f", font="Helvetica")
+surname_entry = Entry(window)
+
+id_number_label = Label(window, text="Please enter ID Number!", fg="#8dc63f", font="Helvetica")
+id_number_entry = Entry(window)
+
+phone_number_label = Label(window, text="Please enter phone number!", fg="#8dc63f", font="Helvetica")
+phone_number_entry = Entry(window)
+
+nok_label = Label(window, text="Next of kin details!", fg="#8dc63f", font=("Helvetica", 18))
+
+nok_name_label = Label(window, text="Please enter name!", fg="#8dc63f", font="Helvetica")
+nok_name_entry = Entry(window)
+
+nok_phone_number_label = Label(window, text="Please enter phone number!", fg="#8dc63f", font="Helvetica")
+nok_phone_number_entry = Entry(window)
+
+edit_visitor_btn = Button(window, text="Update visitor", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30,
+                          command=edit_visitor)
 
 window.mainloop()

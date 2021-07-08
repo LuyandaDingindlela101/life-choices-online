@@ -52,7 +52,6 @@ def sign_user_up():
                     time_in = datetime.now()
                     #   CALL THE insert_visitor FUNCTION AND PASS IN THE NEEDED PARAMETERS
                     insert_visitor(name, surname, id_number, phone_number, 1, time_in)
-
                     # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE SO WE KNOW WHICH visitor TO ASSIGN THE NEXT OF KIN TO
                     query = "SELECT id FROM visitors WHERE name='" + name + "' AND id_number='" + id_number + "';"
                     #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
