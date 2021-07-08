@@ -9,8 +9,6 @@ from tkinter.ttk import Style, Treeview
 window = Tk()
 window.geometry("1100x550")
 window.title("Life Choices Online")
-# here we are binding keyboard
-# with the main window
 
 
 #   ADD STYLES TO TREEVIEW
@@ -31,7 +29,7 @@ def populate_treeview():
     #   LOOP THROUGH THE database_list
     for database_item in database_list:
         #   CREATE A NEW INSERT INTO THE tree_view WITH EACH ENTRY IN THE DATABASE
-        tree_view.insert(parent='', index=index, iid=index, values=database_item)
+        tree_view.insert(parent="", index=index, iid=index, values=database_item)
         #   INCREASE index BY 1 ON EACH ITERATION
         index = index + 1
 
@@ -249,25 +247,25 @@ tree_view = Treeview(window, style="my_style.Treeview")
 #   DEFINE COLUMNS HEADINGS
 tree_view['columns'] = ('ID', 'Name', 'Surname', "ID Number", "Phone Number", "Logged In", "Time In", "Time Out")
 #   FORMAT COLUMNS
-tree_view.column('#0', width=0, stretch=NO)
-tree_view.column('ID', anchor=CENTER, width=80)
-tree_view.column('Name', anchor=CENTER, width=100)
-tree_view.column('Surname', anchor=CENTER, width=100)
-tree_view.column('ID Number', anchor=CENTER, width=150)
-tree_view.column('Phone Number', anchor=CENTER, width=150)
-tree_view.column('Logged In', anchor=CENTER, width=150)
-tree_view.column('Time In', anchor=CENTER, width=150)
-tree_view.column('Time Out', anchor=CENTER, width=150)
+tree_view.column("#0", width=0, stretch=NO)
+tree_view.column("ID", anchor=CENTER, width=80)
+tree_view.column("Name", anchor=CENTER, width=100)
+tree_view.column("Surname", anchor=CENTER, width=100)
+tree_view.column("ID Number", anchor=CENTER, width=150)
+tree_view.column("Phone Number", anchor=CENTER, width=150)
+tree_view.column("Logged In", anchor=CENTER, width=150)
+tree_view.column("Time In", anchor=CENTER, width=150)
+tree_view.column("Time Out", anchor=CENTER, width=150)
 #   CREATE HEADINGS
-tree_view.heading('#0')
-tree_view.heading('ID', text="ID", anchor=CENTER)
-tree_view.heading('Name', text="Name", anchor=CENTER)
-tree_view.heading('Surname', text="Surname", anchor=CENTER)
-tree_view.heading('ID Number', text="ID Number", anchor=CENTER)
-tree_view.heading('Phone Number', text="Phone Number", anchor=CENTER)
-tree_view.heading('Logged In', text="Logged In", anchor=CENTER)
-tree_view.heading('Time In', text="Time In", anchor=CENTER)
-tree_view.heading('Time Out', text="Time Out", anchor=CENTER)
+tree_view.heading("#0")
+tree_view.heading("ID", text="ID", anchor=CENTER)
+tree_view.heading("Name", text="Name", anchor=CENTER)
+tree_view.heading("Surname", text="Surname", anchor=CENTER)
+tree_view.heading("ID Number", text="ID Number", anchor=CENTER)
+tree_view.heading("Phone Number", text="Phone Number", anchor=CENTER)
+tree_view.heading("Logged In", text="Logged In", anchor=CENTER)
+tree_view.heading("Time In", text="Time In", anchor=CENTER)
+tree_view.heading("Time Out", text="Time Out", anchor=CENTER)
 # ADD DATA
 populate_treeview()
 tree_view.place(x=10, y=200)

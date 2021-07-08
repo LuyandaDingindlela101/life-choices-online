@@ -1,4 +1,6 @@
 from tkinter import *
+
+from database_connection import read_table, update_table
 from utilities import *
 
 window = Tk()
@@ -16,8 +18,12 @@ def sign_user_in():
         if validate_min_entries(name, id_number):
             #   IF VALIDATION PASSES, CALL THE user_exists FUNCTION AND PASS IN THE name AND id_number ENTRIES
             if user_exists(name, id_number):
+                #   IF USER EXISTS, GET THE USER AND CHANGE THEIR logged_in STATUS
+                visitor = select_from_table("SELECT * FROM visitors WHERE name='" + name + "' AND id_number='" + id_number + "';")[0]
+                print("UPDATE visitors SET logged_in = 1 WHERE id = " + str(visitor[0]))
+                update_table("UPDATE visitors SET logged_in = 1 WHERE id = " + str(visitor[0]))
                 messagebox.showinfo("Login successful", "You have successfully logged in")
-                #   IF USER EXISTS, DESTROY THE CURRENT WINDOW AND LOG THEM IN
+                #   DESTROY THE CURRENT WINDOW AND LOG THEM IN
                 window.destroy()
                 import logged_in
             #     IF USER DOESNT EXIST...

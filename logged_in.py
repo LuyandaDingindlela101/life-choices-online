@@ -1,9 +1,13 @@
 from tkinter import *
 from tkinter import messagebox
+from database_connection import read_table
 
 window = Tk()
 window.title("Life Choices Online")
 window.geometry("500x550")
+
+
+print(read_table("visitors"))
 
 
 def sign_out():
