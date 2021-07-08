@@ -110,7 +110,7 @@ def edit_visitor():
             nok_phone_number = nok_phone_number_entry.get()
 
             #   CALL THE validate_entries FUNCTION AND PASS IN ALL THE ENTRIES
-            if validate_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
+            if validate_max_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
                 if not user_exists(name, id_number):
                     #   QUERY TO UPDATE THE visitors TABLE
                     query = "UPDATE visitors SET name = '" + name + "', surname = '" + surname + "', id_number = '" + id_number + "', phone_number = '" + phone_number + "' WHERE id = " + visitor_id
@@ -191,7 +191,7 @@ def add_visitor():
             nok_phone_number = nok_phone_number_entry.get()
 
             #   CALL THE validate_entries FUNCTION AND PASS IN ALL THE ENTRIES
-            if validate_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
+            if validate_max_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
                 if not user_exists(name, id_number):
                     time_in = datetime.now()
                     #   CALL THE insert_visitor FUNCTION AND PASS IN THE NEEDED PARAMETERS

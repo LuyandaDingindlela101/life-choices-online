@@ -21,7 +21,7 @@ def sign_user_up():
         nok_phone_number = nok_phone_number_entry.get()
 
         #   CALL THE validate_entries FUNCTION AND PASS IN ALL THE ENTRIES
-        if validate_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
+        if validate_max_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
             #   IF VALIDATION PASSES, CALL THE id_valid FUNCTION AND PASS IN THE id_number
             if id_valid(id_number):
                 #       ONCE THE id_number IS VALID, WE CHECK IF THE USER DOESNT EXIST ALREADY IN THE DATABASE

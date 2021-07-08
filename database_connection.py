@@ -29,7 +29,7 @@ def create_admins_table():
             "id int unsigned NOT NULL auto_increment, " \
             "name varchar(50) NOT NULL, " \
             "email varchar(50) NOT NULL, " \
-            "password varchar(50) NOT NULL, " \
+            "id_number varchar(13) NOT NULL, " \
             "PRIMARY KEY (id) ); "
 
     my_cursor = my_db.cursor()
@@ -72,9 +72,9 @@ def insert_nok(name, phone_number, visitor_id):
     my_db.commit()
 
 
-def insert_admin(name, email, password):
-    query = "INSERT INTO admins ( name ,email ,password ) " \
-            "VALUES ( '" + name + "', '" + email + "', '" + password + "' );"
+def insert_admin(name, email, id_number):
+    query = "INSERT INTO admins ( name, email, id_number ) " \
+            "VALUES ( '" + name + "', '" + email + "', '" + id_number + "' );"
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)

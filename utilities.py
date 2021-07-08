@@ -59,11 +59,49 @@ def user_exists(name, id_number):
         return False
 
 
+#   FUNCTION WILL CHECK IF USER EXISTS IN THE DATABASE
+def admin_exists(name, id_number):
+    # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE
+    query = "SELECT * FROM admins WHERE name='" + name + "' AND id_number='" + id_number + "';"
+    #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
+    db_rows = select_from_table(query)
+
+    #   CHECK IF THE LENGTH OF db_rows IS MORE THAN 0, IF YES THEN THE USER EXISTS
+    if len(db_rows) > 0:
+        return True
+    #   IF NO, THEN THE USER DOESNT EXIST
+    else:
+        return False
+
+
 #   FUNCTION WILL VALIDATE ALL ENTRIES BY CHECKING CONTENTS AND DATA TYPES
-def validate_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
+def validate_min_entries(name, id_number):
+    try:
+        #   CHECK IF ALL THE ENTRIES ARE NOT EMPTY
+        if not_empty(name) and not_empty(id_number):
+            #   CHECK IF THE id_number_entry AND phone_number_entry ARE NUMBERS
+            if len(id_number) == 13:
+                #   CHECK IF THE ID NUMBER IS VALID
+                if not id_valid(id_number):
+                    messagebox.showerror("Validation Error", "Your ID Number is invalid")
+                    return False
+                else:
+                    return True
+            else:
+                messagebox.showerror("Validation Error", "Please check ID Number or phone numbers")
+                return False
+    except ValueError:
+        messagebox.showerror("Validation Error", "Please check your inputs")
+    except TypeError:
+        messagebox.showerror("Validation Error", "Please check your ID Number")
+
+
+#   FUNCTION WILL VALIDATE ALL ENTRIES BY CHECKING CONTENTS AND DATA TYPES
+def validate_max_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
     try:
         #   CHECK IF ALL THE ENTRIES ARE EMPTY
-        if not_empty(name) and not_empty(surname) and not_empty(id_number) and not_empty(phone_number) and not_empty(nok_name) and not_empty(nok_phone_number):
+        if not_empty(name) and not_empty(surname) and not_empty(id_number) and not_empty(phone_number) and not_empty(
+                nok_name) and not_empty(nok_phone_number):
             #   CHECK IF THE id_number_entry AND phone_number_entry ARE NUMBERS
             if len(id_number) == 13 and len(phone_number) == 10 and len(nok_phone_number) == 10:
                 #   CHECK IF THE ID NUMBER IS VALID

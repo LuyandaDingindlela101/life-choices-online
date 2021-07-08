@@ -5,32 +5,6 @@ window = Tk()
 window.title("Life Choices Online")
 window.geometry("500x400")
 
-
-#   FUNCTION WILL VALIDATE ALL ENTRIES BY CHECKING CONTENTS AND DATA TYPES
-def validate_entries(name, id_number):
-    try:
-        name = name_entry.get()
-        id_number = id_number_entry.get()
-
-        #   CHECK IF ALL THE ENTRIES ARE NOT EMPTY
-        if not_empty(name) and not_empty(id_number):
-            #   CHECK IF THE id_number_entry AND phone_number_entry ARE NUMBERS
-            if len(id_number) == 13:
-                #   CHECK IF THE ID NUMBER IS VALID
-                if not id_valid(id_number):
-                    messagebox.showerror("Validation Error", "Your ID Number is invalid")
-                    return False
-                else:
-                    return True
-            else:
-                messagebox.showerror("Validation Error", "Please check ID Number or phone numbers")
-                return False
-    except ValueError:
-        messagebox.showerror("Validation Error", "Please check your inputs")
-    except TypeError:
-        messagebox.showerror("Validation Error", "Please check your ID Number")
-
-
 #   FUNCTION WILL SIGN A USER IN IF ENTRIES PASS VALIDATION AND USER EXISTS IN DATABASE
 def sign_user_in():
     try:
@@ -39,7 +13,7 @@ def sign_user_in():
         id_number = id_number_entry.get()
 
         #   CALL THE validate_entries FUNCTION AND PASS IN THE name AND id_number ENTRIES
-        if validate_entries(name, id_number):
+        if validate_min_entries(name, id_number):
             #   IF VALIDATION PASSES, CALL THE user_exists FUNCTION AND PASS IN THE name AND id_number ENTRIES
             if user_exists(name, id_number):
                 messagebox.showinfo("Login successful", "You have successfully logged in")
