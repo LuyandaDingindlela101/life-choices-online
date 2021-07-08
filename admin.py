@@ -1,8 +1,10 @@
 from tkinter import *
+from utilities import *
 from datetime import datetime
 from tkinter import messagebox
 from database_connection import *
 from tkinter.ttk import Style, Treeview
+
 
 window = Tk()
 window.geometry("1100x550")
@@ -34,14 +36,20 @@ def populate_treeview():
 #   FUNCTION WILL DELETE AN ENTRY FROM THE DATABASE
 def delete_row():
     try:
-        #   GET THE ID OF THE SELECTED ITEM
-        selected_id = tree_view.focus()
-        #   GET THE ACTUAL ITEMS VALUES
-        visitor = tree_view.item(selected_id, 'values')
-        #   DELETE THE ENTRY IN THE next_of_kin TABLE FIRST BY USING THE visitor_id
-        delete_entry("next_of_kin", "visitor_id", visitor[0])
-        #   DELETE THE ACTUAL visitor
-        delete_entry("visitors", "id", visitor[0])
+        permission = messagebox.askquestion("Add new user", "Are you sure you want to continue?")
+
+        if permission == "yes":
+            #   GET THE ID OF THE SELECTED ITEM
+            selected_id = tree_view.focus()
+            #   GET THE ACTUAL ITEMS VALUES
+            visitor = tree_view.item(selected_id, 'values')
+            #   DELETE THE ENTRY IN THE next_of_kin TABLE FIRST BY USING THE visitor_id
+            delete_entry("next_of_kin", "visitor_id", visitor[0])
+            #   DELETE THE ACTUAL visitor
+            delete_entry("visitors", "id", visitor[0])
+            #   REPOPULATE THE TREEVIEW
+            populate_treeview()
+
     #     IF THE delete_btn IS CLICKED WITHOUT ANY ENTRY SELECTED, TELL THE USER TO CHOOSE AN ENTRY
     except IndexError:
         messagebox.showerror("Entry not chosen", "Please select an entry above")
@@ -49,6 +57,9 @@ def delete_row():
 
 def populate_entries():
     try:
+        #   CLEAR THE ENTRIES BEFORE UPDATING THERE VALUES
+        clear_entries()
+
         #   GET THE ID OF THE SELECTED ITEM
         selected_id = tree_view.focus()
         #   GET THE ACTUAL ITEMS VALUES
@@ -72,37 +83,50 @@ def populate_entries():
 
 
 def edit_visitor():
-    #   GET THE ID OF THE SELECTED ITEM
-    selected_id = tree_view.focus()
-    #   GET THE ACTUAL ITEMS VALUES
-    visitor = tree_view.item(selected_id, 'values')
-    #   GET THE visitor NEXT OF KIN
-    nok_query = "SELECT name, phone_number FROM next_of_kin WHERE visitor_id = " + visitor[0]
-    nok = select_from_table(nok_query)[0]
+    try:
+        permission = messagebox.askquestion("Add new user", "Are you sure you want to continue?")
 
-    #   GET THE visitor DETAILS FROM THE ENTRIES
-    name = name_entry.get()
-    surname = surname_entry.get()
-    id_number = id_number_entry.get()
-    phone_number = phone_number_entry.get()
-    visitor_id = visitor[0]
+        if permission == "yes":
+            #   GET THE ID OF THE SELECTED ITEM
+            selected_id = tree_view.focus()
+            #   GET THE ACTUAL ITEMS VALUES
+            visitor = tree_view.item(selected_id, 'values')
+            #   GET THE visitor NEXT OF KIN
+            nok_query = "SELECT name, phone_number FROM next_of_kin WHERE visitor_id = " + visitor[0]
+            nok = select_from_table(nok_query)[0]
 
-    #   GET THE nok DETAILS FROM THE ENTRIES
-    nok_name = nok_name_entry.get()
-    nok_phone_number = nok_phone_number_entry.get()
+            #   GET THE visitor DETAILS FROM THE ENTRIES
+            name = name_entry.get()
+            surname = surname_entry.get()
+            id_number = id_number_entry.get()
+            phone_number = phone_number_entry.get()
+            visitor_id = visitor[0]
 
-    #   QUERY TO UPDATE THE visitors TABLE
-    query = "UPDATE visitors SET name = '" + name + "', surname = '" + surname + "', id_number = '" + id_number + "', phone_number = '" + phone_number + "' WHERE id = " + visitor_id
-    update_table(query)
+            #   GET THE nok DETAILS FROM THE ENTRIES
+            nok_name = nok_name_entry.get()
+            nok_phone_number = nok_phone_number_entry.get()
 
-    #   QUERY TO UPDATE THE next_of_kin TABLE
-    nok_query = "UPDATE next_of_kin SET name = '" + nok_name + "', phone_number = '" + nok_phone_number + "' WHERE visitor_id = " + visitor_id
-    update_table(nok_query)
+            #   CALL THE validate_entries FUNCTION AND PASS IN ALL THE ENTRIES
+            if validate_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
+                if not user_exists(name, id_number):
+                    #   QUERY TO UPDATE THE visitors TABLE
+                    query = "UPDATE visitors SET name = '" + name + "', surname = '" + surname + "', id_number = '" + id_number + "', phone_number = '" + phone_number + "' WHERE id = " + visitor_id
+                    update_table(query)
 
-    #   REPOPULATE THE TREEVIEW
-    populate_treeview()
-    #   RESIZE THE WINDOW
-    window.geometry("1100x500")
+                    #   QUERY TO UPDATE THE next_of_kin TABLE
+                    nok_query = "UPDATE next_of_kin SET name = '" + nok_name + "', phone_number = '" + nok_phone_number + "' WHERE visitor_id = " + visitor_id
+                    update_table(nok_query)
+                    #   REPOPULATE THE TREEVIEW
+                    populate_treeview()
+                    #   RESIZE THE WINDOW
+                    window.geometry("1100x500")
+                #     IF THE USER EXISTS IN THE DATABASE, ALLOW THEM TO TRY AGAIN
+                else:
+                    #   SHOW THE USER THE ERROR MESSAGE BOX
+                    messagebox.showinfo("User exists", "Please try again.")
+
+    except IndexError:
+        messagebox.showerror("Entry not chosen", "Please select an entry above")
 
 
 def show_hidden_entries():
@@ -128,49 +152,85 @@ def show_hidden_entries():
     nok_phone_number_entry.place(x=250, y=780)
 
 
-def add_users():
-    show_hidden_entries()
-    edit_visitor_btn.place(x=10, y=850)
-
-
 #   FUNCTION WILL EDIT A SELECTED ENTRY IN THE DATABASE
 def edit_row():
     show_hidden_entries()
     edit_visitor_btn.place(x=10, y=850)
+    cancel_btn.place(x=500, y=850)
 
     #   CALL THE populate_entries FUNCTION TO POPULATE THE ENTRIES WITH THE VISITOR AND NEXT OF KIN DETAILS
     populate_entries()
 
 
 def create_row():
+    #   CLEAR THE ENTRIES BEFORE UPDATING THERE VALUES
+    clear_entries()
+
     visitor_id = IntVar
     show_hidden_entries()
     create_visitor_btn.place(x=10, y=850)
+    cancel_btn.place(x=500, y=850)
 
-    #   GET THE visitor DETAILS FROM THE ENTRIES
-    name = name_entry.get()
-    surname = surname_entry.get()
-    id_number = id_number_entry.get()
-    phone_number = phone_number_entry.get()
 
-    #   GET THE nok DETAILS FROM THE ENTRIES
-    nok_name = nok_name_entry.get()
-    nok_phone_number = nok_phone_number_entry.get()
-    time_in = datetime.now()
-    #   CALL THE insert_visitor FUNCTION AND PASS IN THE NEEDED PARAMETERS
-    insert_visitor(name, surname, id_number, phone_number, 1, time_in)
-    # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE SO WE KNOW WHICH visitor TO ASSIGN THE NEXT OF KIN TO
-    query = "SELECT id FROM visitors WHERE name='" + name + "' AND id_number='" + id_number + "';"
-    #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
-    db_rows = select_from_table(query)
-    #   HERE, WE LOOP THROUGH THE SET AT THE 0 INDEX TO GET THE VALUE OF THE id
-    for i in db_rows[0]:
-        visitor_id = i
+def add_visitor():
+    try:
+        permission = messagebox.askquestion("Add new user", "Are you sure you want to continue?")
 
-    #   SAVE THE NEXT OF KIN WITH THE CORRECT visitor_id
-    insert_nok(nok_name, nok_phone_number, visitor_id)
-    #   REPOPULATE THE TREEVIEW WITH THE NEW VISITOR
-    populate_treeview()
+        if permission == "yes":
+            #   GET THE visitor DETAILS FROM THE ENTRIES
+            name = name_entry.get()
+            surname = surname_entry.get()
+            id_number = id_number_entry.get()
+            phone_number = phone_number_entry.get()
+
+            #   GET THE nok DETAILS FROM THE ENTRIES
+            nok_name = nok_name_entry.get()
+            nok_phone_number = nok_phone_number_entry.get()
+
+            #   CALL THE validate_entries FUNCTION AND PASS IN ALL THE ENTRIES
+            if validate_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
+                if not user_exists(name, id_number):
+                    time_in = datetime.now()
+                    #   CALL THE insert_visitor FUNCTION AND PASS IN THE NEEDED PARAMETERS
+                    insert_visitor(name, surname, id_number, phone_number, 1, time_in)
+                    # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE SO WE KNOW WHICH visitor TO ASSIGN THE NEXT OF KIN TO
+                    query = "SELECT id FROM visitors WHERE name='" + name + "' AND id_number='" + id_number + "';"
+                    #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
+                    db_rows = select_from_table(query)
+                    #   HERE, WE LOOP THROUGH THE SET AT THE 0 INDEX TO GET THE VALUE OF THE id
+                    for i in db_rows[0]:
+                        visitor_id = i
+
+                    #   SAVE THE NEXT OF KIN WITH THE CORRECT visitor_id
+                    insert_nok(nok_name, nok_phone_number, visitor_id)
+                    #   REPOPULATE THE TREEVIEW WITH THE NEW VISITOR
+                    populate_treeview()
+                    #   AFTER ADDING THE NEW visitor, CLEAR THE ENTRIES
+                    clear_entries()
+
+                #     IF THE USER EXISTS IN THE DATABASE, ALLOW THEM TO TRY AGAIN
+                else:
+                    #   SHOW THE USER THE ERROR MESSAGE BOX
+                    messagebox.showinfo("User exists", "Please try again.")
+    except ValueError:
+        messagebox.showerror("Validation", "Please check your inputs")
+
+
+def clear_entries():
+    clear_entry(name_entry)
+    clear_entry(surname_entry)
+    clear_entry(phone_number_entry)
+    clear_entry(id_number_entry)
+    clear_entry(nok_name_entry)
+    clear_entry(nok_phone_number_entry)
+
+
+def cancel():
+    permission = messagebox.askquestion("Cancel operation", "Are you sure you want to continue?")
+
+    if permission == "yes":
+        clear_entries()
+        window.geometry("1100x500")
 
 
 canvas = Canvas(window, width=450, height=100)
@@ -218,9 +278,7 @@ edit_btn.place(x=380, y=450)
 delete_btn = Button(window, text="DELETE VISITOR", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=delete_row)
 delete_btn.place(x=775, y=450)
 
-hr_label = Label(window,
-                 text="____________________________________________________________________________________________________________________________________________________",
-                 fg="#8dc63f")
+hr_label = Label(window, text="____________________________________________________________________________________________________________________________________________________", fg="#8dc63f")
 
 edit_label = Label(window, text="Edit entry!", fg="#8dc63f", font=("Helvetica", 18))
 
@@ -244,10 +302,10 @@ nok_name_entry = Entry(window)
 nok_phone_number_label = Label(window, text="Please enter phone number!", fg="#8dc63f", font="Helvetica")
 nok_phone_number_entry = Entry(window)
 
-edit_visitor_btn = Button(window, text="Update visitor", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30,
-                          command=edit_visitor)
+edit_visitor_btn = Button(window, text="UPDATE VISITOR", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=edit_visitor)
 
-create_visitor_btn = Button(window, text="Add new visitor", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30,
-                          command=create_row)
+create_visitor_btn = Button(window, text="ADD NEW VISITOR", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=add_visitor)
 
+
+cancel_btn = Button(window, text="CANCEL", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=cancel)
 window.mainloop()

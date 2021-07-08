@@ -57,3 +57,27 @@ def user_exists(name, id_number):
     #   IF NO, THEN THE USER DOESNT EXIST
     else:
         return False
+
+
+#   FUNCTION WILL VALIDATE ALL ENTRIES BY CHECKING CONTENTS AND DATA TYPES
+def validate_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
+    try:
+        #   CHECK IF ALL THE ENTRIES ARE EMPTY
+        if not_empty(name) and not_empty(surname) and not_empty(id_number) and not_empty(phone_number) and not_empty(nok_name) and not_empty(nok_phone_number):
+            #   CHECK IF THE id_number_entry AND phone_number_entry ARE NUMBERS
+            if len(id_number) == 13 and len(phone_number) == 10 and len(nok_phone_number) == 10:
+                #   CHECK IF THE ID NUMBER IS VALID
+                if id_valid(id_number):
+                    return True
+                else:
+                    messagebox.showerror("Validation Error", "Your ID Number is invalid")
+                    return False
+            else:
+                messagebox.showerror("Validation Error", "Please check ID Number or phone numbers")
+                return False
+        else:
+            messagebox.showerror("Validation Error", "Inputs cannot be empty")
+    except ValueError:
+        messagebox.showerror("Validation Error", "Please check your inputs")
+    except TypeError:
+        messagebox.showerror("Validation Error", "Please check your ID Number")
