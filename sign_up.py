@@ -6,8 +6,8 @@ from database_connection import *
 
 
 window = Tk()
-window.title("Life Choices Online")
 window.geometry("500x550")
+window.title("Life Choices Online")
 
 
 def sign_user_up():
@@ -27,12 +27,11 @@ def sign_user_up():
                 #       ONCE THE id_number IS VALID, WE CHECK IF THE USER DOESNT EXIST ALREADY IN THE DATABASE
                 if not user_exists(name, id_number):
                     visitor_id = ""
-                    time_in = datetime.now()
                     #   CALL THE insert_visitor FUNCTION AND PASS IN THE NEEDED PARAMETERS
-                    insert_visitor(name, surname, id_number, phone_number, 1, time_in)
+                    insert_visitor(name, surname, id_number, phone_number)
 
                     # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE SO WE KNOW WHICH visitor TO ASSIGN THE NEXT OF KIN TO
-                    query = "SELECT id FROM visitors WHERE name='" + name + "' AND id_number='" + id_number + "';"
+                    query = "SELECT id FROM visitor WHERE name='" + name + "' AND id_number='" + id_number + "';"
                     #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
                     db_rows = select_from_table(query)
                     #   HERE, WE LOOP THROUGH THE SET AT THE 0 INDEX TO GET THE VALUE OF THE id

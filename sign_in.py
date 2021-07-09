@@ -7,6 +7,12 @@ window = Tk()
 window.title("Life Choices Online")
 window.geometry("500x400")
 
+
+def admin_login(e):
+    window.destroy()
+    import admin_login
+
+
 #   FUNCTION WILL SIGN A USER IN IF ENTRIES PASS VALIDATION AND USER EXISTS IN DATABASE
 def sign_user_in():
     try:
@@ -19,8 +25,8 @@ def sign_user_in():
             #   IF VALIDATION PASSES, CALL THE user_exists FUNCTION AND PASS IN THE name AND id_number ENTRIES
             if user_exists(name, id_number):
                 #   IF USER EXISTS, GET THE USER AND CHANGE THEIR logged_in STATUS
-                visitor = select_from_table("SELECT * FROM visitors WHERE name='" + name + "' AND id_number='" + id_number + "';")[0]
-                update_table("UPDATE visitors SET logged_in = 1 WHERE id = " + str(visitor[0]))
+                visitor = select_from_table("SELECT * FROM visitor WHERE name='" + name + "' AND id_number='" + id_number + "';")[0]
+                update_table("UPDATE visitor SET logged_in = 1 WHERE id = " + str(visitor[0]))
                 messagebox.showinfo("Login successful", "You have successfully logged in")
                 #   DESTROY THE CURRENT WINDOW AND LOG THEM IN
                 window.destroy()
@@ -44,6 +50,9 @@ def sign_user_in():
         messagebox.showerror("Validation error", "Please check your entries")
 
 
+#   HERE WE BIND THE window WITH A <Control-Alt-a> KEYPRESS EVENT AND RUN THE admin_login FUNCTION
+window.bind('<Control-a>', admin_login)
+
 canvas = Canvas(window, width=450, height=100)
 canvas.place(x=10, y=10)
 
@@ -65,5 +74,8 @@ id_number_entry.place(x=250, y=220)
 
 sign_in_btn = Button(window, text="SIGN UP", width=50, bg="#8dc63f", fg="#ffffff", borderwidth=0, command=sign_user_in)
 sign_in_btn.place(x=10, y=300)
+
+admin_label = Label(window, text="Ctrl + a for ADMIN", fg="#8dc63f", font=("Helvetica", 11))
+admin_label.place(x=150, y=350)
 
 window.mainloop()

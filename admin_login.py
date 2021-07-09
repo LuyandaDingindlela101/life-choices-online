@@ -1,10 +1,10 @@
 from tkinter import *
 from utilities import *
-from database_connection import read_table, drop_table, create_admins_table, insert_admin
+from database_connection import read_table, drop_table, create_admin_table, insert_admin
 
 window = Tk()
-window.title("Life Choices Online")
 window.geometry("500x400")
+window.title("Life Choices Online")
 
 
 def sign_admin_in():

@@ -24,8 +24,8 @@ def populate_treeview():
     tree_view.delete(*tree_view.get_children())
     #   Index WILL KEEP TRACK OF EACH TREEVIEW ITEM
     index = 0
-    #   GET ALL THE RECORDS IN THE visitors TABLE
-    database_list = read_table("visitors")
+    #   GET ALL THE RECORDS IN THE visitor TABLE
+    database_list = read_table("visitor")
     #   LOOP THROUGH THE database_list
     for database_item in database_list:
         #   CREATE A NEW INSERT INTO THE tree_view WITH EACH ENTRY IN THE DATABASE
@@ -47,7 +47,7 @@ def delete_row():
             #   DELETE THE ENTRY IN THE next_of_kin TABLE FIRST BY USING THE visitor_id
             delete_entry("next_of_kin", "visitor_id", visitor[0])
             #   DELETE THE ACTUAL visitor
-            delete_entry("visitors", "id", visitor[0])
+            delete_entry("visitor", "id", visitor[0])
             #   REPOPULATE THE TREEVIEW
             populate_treeview()
 
@@ -110,8 +110,8 @@ def edit_visitor():
             #   CALL THE validate_entries FUNCTION AND PASS IN ALL THE ENTRIES
             if validate_max_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
                 if not user_exists(name, id_number):
-                    #   QUERY TO UPDATE THE visitors TABLE
-                    query = "UPDATE visitors SET name = '" + name + "', surname = '" + surname + "', id_number = '" + id_number + "', phone_number = '" + phone_number + "' WHERE id = " + visitor_id
+                    #   QUERY TO UPDATE THE visitor TABLE
+                    query = "UPDATE visitor SET name = '" + name + "', surname = '" + surname + "', id_number = '" + id_number + "', phone_number = '" + phone_number + "' WHERE id = " + visitor_id
                     update_table(query)
 
                     #   QUERY TO UPDATE THE next_of_kin TABLE
@@ -195,7 +195,7 @@ def add_visitor():
                     #   CALL THE insert_visitor FUNCTION AND PASS IN THE NEEDED PARAMETERS
                     insert_visitor(name, surname, id_number, phone_number, 1, time_in)
                     # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE SO WE KNOW WHICH visitor TO ASSIGN THE NEXT OF KIN TO
-                    query = "SELECT id FROM visitors WHERE name='" + name + "' AND id_number='" + id_number + "';"
+                    query = "SELECT id FROM visitor WHERE name='" + name + "' AND id_number='" + id_number + "';"
                     #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
                     db_rows = select_from_table(query)
                     #   HERE, WE LOOP THROUGH THE SET AT THE 0 INDEX TO GET THE VALUE OF THE id

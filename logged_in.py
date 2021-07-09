@@ -4,8 +4,8 @@ from duplicity.dup_time import curtime
 from database_connection import select_from_table, update_table
 
 window = Tk()
-window.title("Life Choices Online")
 window.geometry("500x550")
+window.title("Life Choices Online")
 
 message = StringVar()
 
@@ -15,15 +15,15 @@ def sign_out():
 
     if sign_out == "yes":
         #   FIRST, WE HAVE TO FIND OUT WHO IS LOGGED IN BY QUERYING THE DATABASE FOR WHERE logged_inn = 1
-        visitor = select_from_table("SELECT * FROM visitors WHERE logged_in = 1")[0]
+        visitor = select_from_table("SELECT * FROM visitor WHERE logged_in = 1")[0]
         #   CHANGE THEIR logged_in VALUE TO 0
-        update_table("UPDATE visitors SET logged_in = 0, time_out = " + curtime() + " WHERE id = " + str(visitor[0]))
+        update_table("UPDATE visitor SET logged_in = 0, time_out = curtime() WHERE id = " + str(visitor[0]))
         window.destroy()
         import sign_in
 
 
 def greet_user():
-    visitor = select_from_table("SELECT name FROM visitors WHERE logged_in = 1")[0]
+    visitor = select_from_table("SELECT name FROM visitor WHERE logged_in = 1")[0]
     name = visitor[0]
     message.set("WELCOME BACK " + name.upper() + "!!!")
 
