@@ -1,4 +1,3 @@
-import time
 import mysql.connector
 from duplicity.dup_time import curtime
 
