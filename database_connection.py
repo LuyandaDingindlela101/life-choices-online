@@ -55,7 +55,6 @@ def create_nok_table():
 
 def insert_visitor(name, surname, id_number, phone_number):
     #   logged_in WILL HAVE ONLY TWO VALUES: 1 AND 0, 1 MEANS LOGGED IN AND 0 MEANS LOGGED OUT
-    print("INSERT INTO visitor ( name ,surname ,id_number ,phone_number ,logged_in ,time_in ) VALUES ( '" + name + "', '" + surname + "', '" + id_number + "', '" + phone_number + "', '" + str(1) + "', curtime() );")
     query = "INSERT INTO visitor ( name ,surname ,id_number ,phone_number ,logged_in ,time_in ) " \
             "VALUES ( '" + name + "', '" + surname + "', '" + id_number + "', '" + phone_number + "', '" + str(1) + "', curtime() );"
 

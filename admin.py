@@ -22,16 +22,12 @@ style.map("Treeview", background=[("selected", "#8dc63f")])
 def populate_treeview():
     #   DELETE ALL THE CHILDREN OF THE TREEVIEW
     tree_view.delete(*tree_view.get_children())
-    #   Index WILL KEEP TRACK OF EACH TREEVIEW ITEM
-    index = 0
     #   GET ALL THE RECORDS IN THE visitor TABLE
-    database_list = read_table("visitor")
+    visitors_list = read_table("visitor")
     #   LOOP THROUGH THE database_list
-    for database_item in database_list:
-        #   CREATE A NEW INSERT INTO THE tree_view WITH EACH ENTRY IN THE DATABASE
-        tree_view.insert(parent="", index=index, iid=index, values=database_item)
-        #   INCREASE index BY 1 ON EACH ITERATION
-        index = index + 1
+    for index in range(len(visitors_list)):
+        # CREATE A NEW INSERT INTO THE tree_view WITH EACH ENTRY IN THE DATABASE
+        tree_view.insert(parent="", index="end", iid=index, open=True, values=visitors_list[index])
 
 
 #   FUNCTION WILL DELETE AN ENTRY FROM THE DATABASE
@@ -193,7 +189,7 @@ def add_visitor():
                 if not user_exists(name, id_number):
                     time_in = datetime.now()
                     #   CALL THE insert_visitor FUNCTION AND PASS IN THE NEEDED PARAMETERS
-                    insert_visitor(name, surname, id_number, phone_number, 1, time_in)
+                    insert_visitor(name, surname, id_number, phone_number)
                     # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE SO WE KNOW WHICH visitor TO ASSIGN THE NEXT OF KIN TO
                     query = "SELECT id FROM visitor WHERE name='" + name + "' AND id_number='" + id_number + "';"
                     #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
