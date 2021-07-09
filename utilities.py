@@ -74,7 +74,7 @@ def admin_exists(name, id_number):
         return False
 
 
-#   FUNCTION WILL VALIDATE ALL ENTRIES BY CHECKING CONTENTS AND DATA TYPES
+#   FUNCTION WILL VALIDATE GIVEN ENTRIES BY CHECKING CONTENTS AND DATA TYPES
 def validate_min_entries(name, id_number):
     try:
         #   CHECK IF ALL THE ENTRIES ARE NOT EMPTY
@@ -96,7 +96,7 @@ def validate_min_entries(name, id_number):
         messagebox.showerror("Validation Error", "Please check your ID Number")
 
 
-#   FUNCTION WILL VALIDATE ALL ENTRIES BY CHECKING CONTENTS AND DATA TYPES
+#   FUNCTION WILL VALIDATE GIVEN ENTRIES BY CHECKING CONTENTS AND DATA TYPES
 def validate_max_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
     try:
         #   CHECK IF ALL THE ENTRIES ARE EMPTY
