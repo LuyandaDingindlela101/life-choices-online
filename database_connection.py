@@ -39,9 +39,8 @@ def create_nok_table():
 
 
 def insert_visitor(name, surname, id_number, phone_number, admin_status, login_status):
-    query = "INSERT INTO visitor ( name ,surname ,id_number ,phone_number ,is_admin ,logged_in ,time_in ) " \
-            "VALUES ( '" + name + "', '" + surname + "', '" + id_number + "', '" + phone_number + "', '" + admin_status + "', '" + login_status + "', curtime() );"
-    print(query)
+    query = f"INSERT INTO visitor ( name ,surname ,id_number ,phone_number ,is_admin ,logged_in ,time_in ) " \
+            f"VALUES ( '{name}', '{surname}', '{id_number}', '{phone_number}', '{admin_status}', '{login_status}', curtime() );"
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
@@ -50,8 +49,8 @@ def insert_visitor(name, surname, id_number, phone_number, admin_status, login_s
 
 
 def insert_nok(name, phone_number, visitor_id):
-    query = "INSERT INTO next_of_kin ( name ,phone_number, visitor_id ) " \
-            "VALUES ( '" + name + "', '" + phone_number + "', '" + str(visitor_id) + "' );"
+    query = f"INSERT INTO next_of_kin ( name ,phone_number, visitor_id ) " \
+            f"VALUES ( '{name}', '{phone_number}', '{str(visitor_id)}' );"
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
@@ -66,8 +65,8 @@ def update_table(query):
     my_db.commit()
 
 
-def delete_entry(table_name, column_name, id):
-    query = "DELETE FROM " + table_name + " WHERE " + column_name + " = " + id + ";"
+def delete_entry(table_name, column_name, column_value):
+    query = f"DELETE FROM {table_name} WHERE {column_name} = {column_value};"
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
@@ -77,14 +76,14 @@ def delete_entry(table_name, column_name, id):
 
 def read_table(table_name):
     my_cursor = my_db.cursor()
-    my_cursor.execute('SELECT * FROM ' + table_name)
+    my_cursor.execute(f"SELECT * FROM {table_name}")
 
     return my_cursor.fetchall()
 
 
 def describe_table(table_name):
     my_cursor = my_db.cursor()
-    my_cursor.execute('DESCRIBE ' + table_name)
+    my_cursor.execute(f"DESCRIBE {table_name}")
 
     for i in my_cursor:
         print(i)
@@ -99,7 +98,7 @@ def show_tables():
 
 def drop_table(table_name):
     my_cursor = my_db.cursor()
-    my_cursor.execute('DROP TABLE ' + table_name)
+    my_cursor.execute(f"DROP TABLE {table_name}")
 
 
 def select_from_table(query):

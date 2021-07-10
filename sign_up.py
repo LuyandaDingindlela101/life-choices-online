@@ -31,7 +31,7 @@ def sign_user_up():
                     insert_visitor(name, surname, id_number, phone_number)
 
                     # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE SO WE KNOW WHICH visitor TO ASSIGN THE NEXT OF KIN TO
-                    query = "SELECT id FROM visitor WHERE name='" + name + "' AND id_number='" + id_number + "';"
+                    query = f"SELECT id FROM visitor WHERE name='{name}' AND id_number='{id_number}';"
                     #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
                     db_rows = select_from_table(query)
                     #   HERE, WE LOOP THROUGH THE SET AT THE 0 INDEX TO GET THE VALUE OF THE id

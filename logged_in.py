@@ -17,7 +17,7 @@ def sign_out():
         #   FIRST, WE HAVE TO FIND OUT WHO IS LOGGED IN BY QUERYING THE DATABASE FOR WHERE logged_in = true BUT is_admin = false, SO WE CANT SELECT THE ADMIN
         visitor = select_from_table("SELECT * FROM visitor WHERE logged_in = 'true' AND is_admin = 'false'")[0]
         #   UPDATE THEIR logged_in AND time_out VALUES
-        update_table("UPDATE visitor SET logged_in = 'false', time_in = NULL, time_out = curtime() WHERE id = " + str(visitor[0]))
+        update_table(f"UPDATE visitor SET logged_in = 'false', time_in = NULL, time_out = curtime() WHERE id = {str(visitor[0])}")
         window.destroy()
         import sign_in
 

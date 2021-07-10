@@ -44,7 +44,7 @@ def populate_entries():
         #   GET THE ACTUAL ITEMS VALUES
         visitor = tree_view.item(selected_id, 'values')
         #   GET THE visitor NEXT OF KIN
-        nok_query = "SELECT name, phone_number FROM next_of_kin WHERE visitor_id = " + visitor[0]
+        nok_query = f"SELECT name, phone_number FROM next_of_kin WHERE visitor_id = {visitor[0]}"
         nok = select_from_table(nok_query)[0]
 
         #   POPULATE THE ENTRIES WITH THE visitor DETAILS
@@ -71,7 +71,7 @@ def edit_visitor():
             #   GET THE ACTUAL ITEMS VALUES
             visitor = tree_view.item(selected_id, 'values')
             #   GET THE visitor NEXT OF KIN
-            nok_query = "SELECT name, phone_number FROM next_of_kin WHERE visitor_id = " + visitor[0]
+            nok_query = f"SELECT name, phone_number FROM next_of_kin WHERE visitor_id = {visitor[0]}"
             nok = select_from_table(nok_query)[0]
 
             #   GET THE visitor DETAILS FROM THE ENTRIES
@@ -89,11 +89,11 @@ def edit_visitor():
             if validate_max_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
                 if not user_exists(name, id_number):
                     #   QUERY TO UPDATE THE visitor TABLE
-                    query = "UPDATE visitor SET name = '" + name + "', surname = '" + surname + "', id_number = '" + id_number + "', phone_number = '" + phone_number + "' WHERE id = " + visitor_id
+                    query = f"UPDATE visitor SET name = '{name}', surname = '{surname}', id_number = '{id_number}', phone_number = '{phone_number}' WHERE id = {visitor_id}"
                     update_table(query)
 
                     #   QUERY TO UPDATE THE next_of_kin TABLE
-                    nok_query = "UPDATE next_of_kin SET name = '" + nok_name + "', phone_number = '" + nok_phone_number + "' WHERE visitor_id = " + visitor_id
+                    nok_query = f"UPDATE next_of_kin SET name = '{nok_name}', phone_number = '{nok_phone_number}' WHERE visitor_id = {visitor_id}"
                     update_table(nok_query)
                     #   REPOPULATE THE TREEVIEW
                     populate_treeview()
@@ -168,7 +168,7 @@ def add_visitor():
                     #   CALL THE insert_visitor FUNCTION AND PASS IN THE NEEDED PARAMETERS
                     insert_visitor(name, surname, id_number, phone_number, admin_status, login_status)
                     # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE SO WE KNOW WHICH visitor TO ASSIGN THE NEXT OF KIN TO
-                    query = "SELECT id FROM visitor WHERE name='" + name + "' AND id_number='" + id_number + "';"
+                    query = f"SELECT id FROM visitor WHERE name = '{name}' AND id_number = '{id_number}';"
                     #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
                     db_rows = select_from_table(query)
                     #   HERE, WE LOOP THROUGH THE SET AT THE 0 INDEX TO GET THE VALUE OF THE id
