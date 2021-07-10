@@ -1,12 +1,11 @@
 from tkinter import *
 from utilities import *
-from datetime import datetime
 from tkinter import messagebox
 from database_connection import *
 from tkinter.ttk import Style, Treeview, Combobox
 
 window = Tk()
-window.geometry("1100x1000")
+window.geometry("1200x1100")
 window.title("Life Choices Online")
 
 
@@ -26,7 +25,8 @@ def populate_treeview():
     #   DELETE ALL THE CHILDREN OF THE TREEVIEW
     tree_view.delete(*tree_view.get_children())
     #   GET ALL THE RECORDS IN THE visitor TABLE
-    visitors_list = read_table("visitor")
+    #   DIDN'T USE THE * BECAUSE I WANTED TO CONTROL THEIR ORDER OF APPEARANCE
+    visitors_list = select_from_table("SELECT id, name, surname, id_number, phone_number, logged_in, time_in, time_out, is_admin FROM visitor")
     #   LOOP THROUGH THE database_list
     for index in range(len(visitors_list)):
         # CREATE A NEW INSERT INTO THE tree_view WITH EACH ENTRY IN THE DATABASE
@@ -154,8 +154,9 @@ def add_visitor():
             name = name_entry.get()
             surname = surname_entry.get()
             id_number = id_number_entry.get()
+            admin_status = admin_combobox.get()
+            login_status = status_combobox.get()
             phone_number = phone_number_entry.get()
-
             #   GET THE nok DETAILS FROM THE ENTRIES
             nok_name = nok_name_entry.get()
             nok_phone_number = nok_phone_number_entry.get()
@@ -163,9 +164,8 @@ def add_visitor():
             #   CALL THE validate_entries FUNCTION AND PASS IN ALL THE ENTRIES
             if validate_max_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
                 if not user_exists(name, id_number):
-                    time_in = datetime.now()
                     #   CALL THE insert_visitor FUNCTION AND PASS IN THE NEEDED PARAMETERS
-                    insert_visitor(name, surname, id_number, phone_number)
+                    insert_visitor(name, surname, id_number, phone_number, admin_status, login_status)
                     # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE SO WE KNOW WHICH visitor TO ASSIGN THE NEXT OF KIN TO
                     query = "SELECT id FROM visitor WHERE name='" + name + "' AND id_number='" + id_number + "';"
                     #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
@@ -206,6 +206,8 @@ def cancel():
         window.geometry("1100x500")
 
 
+
+
 canvas = Canvas(window, width=450, height=100)
 canvas.place(x=300, y=10)
 
@@ -217,7 +219,7 @@ heading_label.place(x=400, y=150)
 
 tree_view = Treeview(window, style="my_style.Treeview")
 #   DEFINE COLUMNS HEADINGS
-tree_view['columns'] = ('ID', 'Name', 'Surname', "ID Number", "Phone Number", "Logged In", "Time In", "Time Out")
+tree_view['columns'] = ("ID", "Name", "Surname", "ID Number", "Phone Number", "Logged In", "Time In", "Time Out", "Admin Status")
 #   FORMAT COLUMNS
 tree_view.column("#0", width=0, stretch=NO)
 tree_view.column("ID", anchor=CENTER, width=80)
@@ -228,6 +230,8 @@ tree_view.column("Phone Number", anchor=CENTER, width=150)
 tree_view.column("Logged In", anchor=CENTER, width=150)
 tree_view.column("Time In", anchor=CENTER, width=150)
 tree_view.column("Time Out", anchor=CENTER, width=150)
+tree_view.column("Admin Status", anchor=CENTER, width=150)
+
 #   CREATE HEADINGS
 tree_view.heading("#0")
 tree_view.heading("ID", text="ID", anchor=CENTER)
@@ -238,6 +242,8 @@ tree_view.heading("Phone Number", text="Phone Number", anchor=CENTER)
 tree_view.heading("Logged In", text="Logged In", anchor=CENTER)
 tree_view.heading("Time In", text="Time In", anchor=CENTER)
 tree_view.heading("Time Out", text="Time Out", anchor=CENTER)
+tree_view.heading("Admin Status", text="Admin Status", anchor=CENTER)
+
 # ADD DATA
 populate_treeview()
 tree_view.place(x=10, y=200)
@@ -284,13 +290,13 @@ phone_number_entry.place(x=650, y=550)
 admin_label = Label(window, text="Allow admin privilege", fg="#8dc63f", font="Helvetica")
 admin_label.place(x=350, y=590)
 admin_combobox = Combobox(window, textvariable=admin_privileges, state="readonly")
-admin_combobox["values"] = ("Grant", "Revoke")
+admin_combobox["values"] = ("true", "false")
 admin_combobox.place(x=350, y=620)
 
 status_label = Label(window, text="Sign user in / out", fg="#8dc63f", font="Helvetica")
 status_label.place(x=650, y=590)
 status_combobox = Combobox(window, textvariable=signed_status, state="readonly")
-status_combobox["values"] = ("Sign out", "Sign in")
+status_combobox["values"] = ("true", "false")
 status_combobox.place(x=650, y=620)
 
 # nok_label = Label(window, text="Next of kin details!", fg="#8dc63f", font=("Helvetica", 18))

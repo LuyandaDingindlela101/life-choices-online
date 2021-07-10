@@ -1,6 +1,5 @@
 from tkinter import *
 from utilities import *
-from database_connection import read_table, drop_table, create_admin_table, insert_admin
 
 window = Tk()
 window.geometry("500x400")

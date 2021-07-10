@@ -38,9 +38,10 @@ def create_nok_table():
     my_cursor.execute(query)
 
 
-def insert_visitor(name, surname, id_number, phone_number):
+def insert_visitor(name, surname, id_number, phone_number, admin_status, login_status):
     query = "INSERT INTO visitor ( name ,surname ,id_number ,phone_number ,is_admin ,logged_in ,time_in ) " \
-            "VALUES ( '" + name + "', '" + surname + "', '" + id_number + "', '" + phone_number + "', 'false', 'true', curtime() );"
+            "VALUES ( '" + name + "', '" + surname + "', '" + id_number + "', '" + phone_number + "', '" + admin_status + "', '" + login_status + "', curtime() );"
+    print(query)
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
@@ -123,4 +124,4 @@ def select_from_table(query):
 # my_cursor.execute(query)
 #
 # my_db.commit()
-print(read_table("visitor"))
+# print(read_table("visitor"))

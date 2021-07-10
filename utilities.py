@@ -62,7 +62,7 @@ def user_exists(name, id_number):
 #   FUNCTION WILL CHECK IF USER EXISTS IN THE DATABASE
 def admin_exists(name, id_number):
     # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE
-    query = "SELECT * FROM admin WHERE name='" + name + "' AND id_number='" + id_number + "';"
+    query = "SELECT * FROM visitor WHERE name = '" + name + "' AND id_number = '" + id_number + "' AND is_admin = 'true';"
     #   CALL THE select_from_table AND PASS IN THE QUERY, WHICH RETURNS A LIST
     db_rows = select_from_table(query)
 
