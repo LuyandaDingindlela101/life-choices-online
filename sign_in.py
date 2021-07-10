@@ -1,7 +1,6 @@
 from tkinter import *
-
-from database_connection import read_table, update_table
 from utilities import *
+from database_connection import update_table, insert_history_in
 
 window = Tk()
 window.title("Life Choices Online")
@@ -26,7 +25,10 @@ def sign_user_in():
             if user_exists(name, id_number):
                 #   IF USER EXISTS, GET THE USER AND CHANGE THEIR logged_in STATUS
                 visitor = select_from_table(f"SELECT * FROM visitor WHERE name='{name}' AND id_number= '{id_number}';")[0]
+                #   UPDATE THE visitor TABLE AND SET THE CURRENT VISITORS logged_in VALUE TO true
                 update_table(f"UPDATE visitor SET logged_in = 'true' WHERE id = {str(visitor[0])}")
+                #   RECORD THE SIGN IN AND INSERT IT INTO THE history TABLE
+                insert_history_in(visitor[0])
                 messagebox.showinfo("Login successful", "You have successfully logged in")
                 #   DESTROY THE CURRENT WINDOW AND LOG THEM IN
                 window.destroy()

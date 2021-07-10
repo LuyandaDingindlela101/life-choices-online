@@ -64,6 +64,20 @@ def insert_nok(name, phone_number, visitor_id):
     my_db.commit()
 
 
+def insert_history_in(visitor_id):
+    query = f"INSERT INTO history ( visitor_id, timestamp_in ) VALUES({str(visitor_id)}, curdate())"
+
+    my_cursor.execute(query)
+    my_db.commit()
+
+
+def insert_history_out(visitor_id):
+    query = f"INSERT INTO history ( visitor_id, timestamp_out ) VALUES({str(visitor_id)}, curdate())"
+
+    my_cursor.execute(query)
+    my_db.commit()
+
+
 def update_table(query):
     my_cursor.execute(query)
     my_db.commit()

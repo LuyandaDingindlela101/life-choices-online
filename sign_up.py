@@ -28,7 +28,7 @@ def sign_user_up():
                 if not user_exists(name, id_number):
                     visitor_id = ""
                     #   CALL THE insert_visitor FUNCTION AND PASS IN THE NEEDED PARAMETERS
-                    insert_visitor(name, surname, id_number, phone_number)
+                    insert_visitor(name, surname, id_number, phone_number, "false", "true")
 
                     # SELECT STATEMENT TO GET A DATABASE ENTRY THAT MEETS THE WHERE CLAUSE SO WE KNOW WHICH visitor TO ASSIGN THE NEXT OF KIN TO
                     query = f"SELECT id FROM visitor WHERE name='{name}' AND id_number='{id_number}';"
@@ -40,6 +40,8 @@ def sign_user_up():
 
                     #   SAVE THE NEXT OF KIN WITH THE CORRECT visitor_id
                     insert_nok(nok_name, nok_phone_number, visitor_id)
+                    #   RECORD THE SIGN IN AND INSERT IT INTO THE history TABLE
+                    insert_history_in(visitor_id)
 
                     #   DESTROY THE CURRENT WINDOW AND LOG THEM IN
                     window.destroy()

@@ -6,9 +6,8 @@ from database_connection import *
 from tkinter.ttk import Style, Treeview, Combobox
 
 window = Tk()
-window.geometry("1200x1100")
+window.geometry("1200x800")
 window.title("Life Choices Online")
-
 
 #   ADD STYLES TO TREEVIEW
 style = Style()
@@ -29,9 +28,9 @@ def populate_treeview():
     #   DIDN'T USE THE * BECAUSE I WANTED TO CONTROL THEIR ORDER OF APPEARANCE
     visitors_list = select_from_table("SELECT id, name, surname, id_number, phone_number, logged_in, time_in, time_out, is_admin FROM visitor")
     #   LOOP THROUGH THE database_list
-    for index in range(len(visitors_list)):
+    for index, visitor in enumerate(visitors_list):
         # CREATE A NEW INSERT INTO THE tree_view WITH EACH ENTRY IN THE DATABASE
-        tree_view.insert(parent="", index="end", iid=index, open=True, values=visitors_list[index])
+        tree_view.insert(parent="", index="end", iid=index, open=True, values=visitor)
 
 
 def populate_entries():
@@ -72,12 +71,13 @@ def edit_visitor():
             visitor = tree_view.item(selected_id, 'values')
             #   GET THE visitor NEXT OF KIN
             nok_query = f"SELECT name, phone_number FROM next_of_kin WHERE visitor_id = {visitor[0]}"
-            nok = select_from_table(nok_query)[0]
 
             #   GET THE visitor DETAILS FROM THE ENTRIES
             name = name_entry.get()
             surname = surname_entry.get()
             id_number = id_number_entry.get()
+            admin_status = admin_combobox.get()
+            login_status = status_combobox.get()
             phone_number = phone_number_entry.get()
             visitor_id = visitor[0]
 
@@ -86,23 +86,17 @@ def edit_visitor():
             nok_phone_number = nok_phone_number_entry.get()
 
             #   CALL THE validate_entries FUNCTION AND PASS IN ALL THE ENTRIES
-            if validate_max_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
-                if not user_exists(name, id_number):
-                    #   QUERY TO UPDATE THE visitor TABLE
-                    query = f"UPDATE visitor SET name = '{name}', surname = '{surname}', id_number = '{id_number}', phone_number = '{phone_number}' WHERE id = {visitor_id}"
-                    update_table(query)
+            if not_empty(name) and not_empty(surname) and not_empty(id_number) and not_empty(phone_number) and not_empty(admin_status) and not_empty(login_status) and not_empty(nok_name) and not_empty(nok_phone_number):
+                #   QUERY TO UPDATE THE visitor TABLE
+                query = f"UPDATE visitor SET name = '{name}', surname = '{surname}', id_number = '{id_number}', phone_number = '{phone_number}', is_admin = '{admin_status}', logged_in = '{login_status}' WHERE id = {visitor_id}"
+                update_table(query)
 
-                    #   QUERY TO UPDATE THE next_of_kin TABLE
-                    nok_query = f"UPDATE next_of_kin SET name = '{nok_name}', phone_number = '{nok_phone_number}' WHERE visitor_id = {visitor_id}"
-                    update_table(nok_query)
-                    #   REPOPULATE THE TREEVIEW
-                    populate_treeview()
-                    #   RESIZE THE WINDOW
-                    window.geometry("1100x500")
-                #     IF THE USER EXISTS IN THE DATABASE, ALLOW THEM TO TRY AGAIN
-                else:
-                    #   SHOW THE USER THE ERROR MESSAGE BOX
-                    messagebox.showinfo("User exists", "Please try again.")
+                #   QUERY TO UPDATE THE next_of_kin TABLE
+                nok_query = f"UPDATE next_of_kin SET name = '{nok_name}', phone_number = '{nok_phone_number}' WHERE visitor_id = {visitor_id}"
+                update_table(nok_query)
+                #   REPOPULATE THE TREEVIEW
+                populate_treeview()
+                clear_entries()
 
     except IndexError:
         messagebox.showerror("Entry not chosen", "Please select an entry above")
@@ -163,7 +157,7 @@ def add_visitor():
             nok_phone_number = nok_phone_number_entry.get()
 
             #   CALL THE validate_entries FUNCTION AND PASS IN ALL THE ENTRIES
-            if validate_max_entries(name, surname, id_number, phone_number, nok_name, nok_phone_number):
+            if not_empty(name) and not_empty(surname) and not_empty(id_number) and not_empty(phone_number) and not_empty(admin_status) and not_empty(login_status) and not_empty(nok_name) and not_empty(nok_phone_number):
                 if not user_exists(name, id_number):
                     #   CALL THE insert_visitor FUNCTION AND PASS IN THE NEEDED PARAMETERS
                     insert_visitor(name, surname, id_number, phone_number, admin_status, login_status)
@@ -204,7 +198,6 @@ def cancel():
 
     if permission == "yes":
         clear_entries()
-        window.geometry("1100x500")
 
 
 def display_report():
@@ -224,6 +217,11 @@ def display_report():
     messagebox.showinfo("Users count", f"{count_in} people have logged in today, and {count_out} people have logged out today.")
 
 
+def navigate_to_history():
+    window.destroy()
+    import history
+
+
 canvas = Canvas(window, width=450, height=100)
 canvas.place(x=300, y=10)
 
@@ -235,7 +233,8 @@ heading_label.place(x=400, y=150)
 
 tree_view = Treeview(window, style="my_style.Treeview")
 #   DEFINE COLUMNS HEADINGS
-tree_view['columns'] = ("ID", "Name", "Surname", "ID Number", "Phone Number", "Logged In", "Time In", "Time Out", "Admin Status")
+tree_view['columns'] = ("ID", "Name", "Surname", "ID Number", "Phone Number", "Logged In", "Time In", "Time Out", "Admin Privileges")
+
 #   FORMAT COLUMNS
 tree_view.column("#0", width=0, stretch=NO)
 tree_view.column("ID", anchor=CENTER, width=80)
@@ -246,7 +245,7 @@ tree_view.column("Phone Number", anchor=CENTER, width=150)
 tree_view.column("Logged In", anchor=CENTER, width=150)
 tree_view.column("Time In", anchor=CENTER, width=150)
 tree_view.column("Time Out", anchor=CENTER, width=150)
-tree_view.column("Admin Status", anchor=CENTER, width=150)
+tree_view.column("Admin Privileges", anchor=CENTER, width=150)
 
 #   CREATE HEADINGS
 tree_view.heading("#0")
@@ -258,7 +257,7 @@ tree_view.heading("Phone Number", text="Phone Number", anchor=CENTER)
 tree_view.heading("Logged In", text="Logged In", anchor=CENTER)
 tree_view.heading("Time In", text="Time In", anchor=CENTER)
 tree_view.heading("Time Out", text="Time Out", anchor=CENTER)
-tree_view.heading("Admin Status", text="Admin Status", anchor=CENTER)
+tree_view.heading("Admin Privileges", text="Admin Privileges", anchor=CENTER)
 
 # ADD DATA
 populate_treeview()
@@ -276,9 +275,8 @@ delete_btn.place(x=10, y=550)
 report_btn = Button(window, text="DAILY REPORT", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=display_report)
 report_btn.place(x=10, y=600)
 
-logout_btn = Button(window, text="LOG OUT", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=delete_row)
-logout_btn.place(x=10, y=650)
-
+history_btn = Button(window, text="VIEW HISTORY", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=navigate_to_history)
+history_btn.place(x=10, y=650)
 
 
 
@@ -314,8 +312,6 @@ status_label.place(x=650, y=590)
 status_combobox = Combobox(window, textvariable=signed_status, state="readonly")
 status_combobox["values"] = ("true", "false")
 status_combobox.place(x=650, y=620)
-
-# nok_label = Label(window, text="Next of kin details!", fg="#8dc63f", font=("Helvetica", 18))
 
 nok_name_label = Label(window, text="Please enter next of kin name!", fg="#8dc63f", font="Helvetica")
 nok_name_label.place(x=350, y=690)

@@ -5,6 +5,7 @@ window.title("Life Choices Online")
 window.geometry("500x350")
 
 
+#
 def admin_login(e):
     window.destroy()
     import admin_login

@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
-from database_connection import select_from_table, update_table
+from database_connection import select_from_table, update_table, insert_history_out
 
 window = Tk()
 window.geometry("500x550")
@@ -14,9 +14,11 @@ def sign_out():
 
     if sign_out == "yes":
         #   FIRST, WE HAVE TO FIND OUT WHO IS LOGGED IN BY QUERYING THE DATABASE FOR WHERE logged_in = true BUT is_admin = false, SO WE CANT SELECT THE ADMIN
-        visitor = select_from_table("SELECT * FROM visitor WHERE logged_in = 'true' AND is_admin = 'false'")[0]
+        visitor_id = select_from_table("SELECT * FROM visitor WHERE logged_in = 'true' AND is_admin = 'false'")[0][0]
         #   UPDATE THEIR logged_in AND time_out VALUES
-        update_table(f"UPDATE visitor SET logged_in = 'false', time_in = NULL, time_out = curtime() WHERE id = {str(visitor[0])}")
+        update_table(f"UPDATE visitor SET logged_in = 'false', time_in = NULL, time_out = curtime() WHERE id = {str(visitor_id)}")
+        #   RECORD THE SIGN IN AND INSERT IT INTO THE history TABLE
+        insert_history_out(visitor_id)
         window.destroy()
         import sign_in
 

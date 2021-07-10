@@ -1,5 +1,6 @@
 from tkinter import *
 from utilities import *
+from database_connection import insert_history_in, update_table
 
 window = Tk()
 window.geometry("500x400")
@@ -13,6 +14,12 @@ def sign_admin_in():
 
         if validate_min_entries(name, id_number):
             if admin_exists(name, id_number):
+                # GET THE VISITOR ID FROM THE DATABASE
+                visitor_id = select_from_table(f"SELECT id FROM visitor WHERE name = '{name}' AND id_number = '{id_number}'")[0][0]
+                #   UPDATE THE visitor TABLE AND SET THE CURRENT VISITORS logged_in VALUE TO true
+                update_table(f"UPDATE visitor SET logged_in = 'true' WHERE id = {str(visitor_id)}")
+                #   RECORD THE SIGN IN AND INSERT IT INTO THE history TABLE
+                insert_history_in(visitor_id)
                 window.destroy()
                 import admin
             else:
