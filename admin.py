@@ -32,6 +32,7 @@ def populate_treeview():
         # CREATE A NEW INSERT INTO THE tree_view WITH EACH ENTRY IN THE DATABASE
         tree_view.insert(parent="", index="end", iid=index, open=True, values=visitors_list[index])
 
+
 def populate_entries():
     try:
         #   CLEAR THE ENTRIES BEFORE UPDATING THERE VALUES

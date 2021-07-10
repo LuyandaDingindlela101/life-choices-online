@@ -13,25 +13,10 @@ def create_visitor_table():
             "surname varchar(50) NOT NULL, " \
             "id_number varchar(13) NOT NULL, " \
             "phone_number varchar(10) NOT NULL, " \
-            "logged_in tinyint NOT NULL, " \
+            "is_admin varchar(10) DEFAULT 'false' NOT NULL, " \
+            "logged_in varchar(10) DEFAULT 'false' NOT NULL, " \
             "time_in time NOT NULL, " \
             "time_out time NOT NULL, " \
-            "PRIMARY KEY (id) ); "
-
-    my_cursor = my_db.cursor()
-    my_cursor.execute(query)
-
-    my_db.commit()
-
-
-# MAKE VISITOR ID FOREIGN KEY
-def create_admin_table():
-    #     IF THE TABLE DOESNT EXIST, CREATE IT
-    query = "CREATE TABLE admin ( " \
-            "id int unsigned NOT NULL auto_increment, " \
-            "name varchar(50) NOT NULL, " \
-            "email varchar(50) NOT NULL, " \
-            "id_number varchar(13) NOT NULL, " \
             "PRIMARY KEY (id) ); "
 
     my_cursor = my_db.cursor()
@@ -67,16 +52,6 @@ def insert_visitor(name, surname, id_number, phone_number):
 def insert_nok(name, phone_number, visitor_id):
     query = "INSERT INTO next_of_kin ( name ,phone_number, visitor_id ) " \
             "VALUES ( '" + name + "', '" + phone_number + "', '" + str(visitor_id) + "' );"
-
-    my_cursor = my_db.cursor()
-    my_cursor.execute(query)
-
-    my_db.commit()
-
-
-def insert_admin(name, email, id_number):
-    query = "INSERT INTO admin ( name, email, id_number ) " \
-            "VALUES ( '" + name + "', '" + email + "', '" + id_number + "' );"
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
