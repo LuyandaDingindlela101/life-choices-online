@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import messagebox
-from duplicity.dup_time import curtime
 from database_connection import select_from_table, update_table
 
 window = Tk()

@@ -3,6 +3,7 @@ from duplicity.dup_time import curtime
 
 
 my_db = mysql.connector.connect(user='sql10423065', password='LGq9PVR277', host='sql10.freesqldatabase.com', database='sql10423065', auth_plugin='mysql_native_password')
+my_cursor = my_db.cursor()
 
 
 #   ID_NUMBER AND PHONE_NUMBER MUST BE A STRING
@@ -19,9 +20,7 @@ def create_visitor_table():
             "time_out time NOT NULL, " \
             "PRIMARY KEY (id) ); "
 
-    my_cursor = my_db.cursor()
     my_cursor.execute(query)
-
     my_db.commit()
 
 
@@ -34,7 +33,18 @@ def create_nok_table():
             "PRIMARY KEY (id), " \
             "FOREIGN KEY (visitor_id) REFERENCES visitor(id) ); "
 
-    my_cursor = my_db.cursor()
+    my_cursor.execute(query)
+
+
+def create_history_table():
+    query = "CREATE TABLE history (" \
+            "id int unsigned NOT NULL auto_increment, " \
+            "visitor_id int unsigned NOT NULL, " \
+            "timestamp_in datetime NOT NULL, " \
+            "timestamp_out datetime NOT NULL, " \
+            "PRIMARY KEY (id), " \
+            "FOREIGN KEY (visitor_id) REFERENCES visitor(id) ); "
+
     my_cursor.execute(query)
 
 
@@ -42,9 +52,7 @@ def insert_visitor(name, surname, id_number, phone_number, admin_status, login_s
     query = f"INSERT INTO visitor ( name ,surname ,id_number ,phone_number ,is_admin ,logged_in ,time_in ) " \
             f"VALUES ( '{name}', '{surname}', '{id_number}', '{phone_number}', '{admin_status}', '{login_status}', curtime() );"
 
-    my_cursor = my_db.cursor()
     my_cursor.execute(query)
-
     my_db.commit()
 
 
@@ -52,75 +60,41 @@ def insert_nok(name, phone_number, visitor_id):
     query = f"INSERT INTO next_of_kin ( name ,phone_number, visitor_id ) " \
             f"VALUES ( '{name}', '{phone_number}', '{str(visitor_id)}' );"
 
-    my_cursor = my_db.cursor()
     my_cursor.execute(query)
-
     my_db.commit()
 
 
 def update_table(query):
-    my_cursor = my_db.cursor()
     my_cursor.execute(query)
-
     my_db.commit()
 
 
 def delete_entry(table_name, column_name, column_value):
     query = f"DELETE FROM {table_name} WHERE {column_name} = {column_value};"
 
-    my_cursor = my_db.cursor()
     my_cursor.execute(query)
-
     my_db.commit()
 
 
 def read_table(table_name):
-    my_cursor = my_db.cursor()
     my_cursor.execute(f"SELECT * FROM {table_name}")
-
     return my_cursor.fetchall()
 
 
 def describe_table(table_name):
-    my_cursor = my_db.cursor()
     my_cursor.execute(f"DESCRIBE {table_name}")
-
-    for i in my_cursor:
-        print(i)
+    return my_cursor.fetchall()
 
 
 def show_tables():
-    my_cursor = my_db.cursor()
     my_cursor.execute('SHOW TABLES')
-
     return my_cursor.fetchall()
 
 
 def drop_table(table_name):
-    my_cursor = my_db.cursor()
     my_cursor.execute(f"DROP TABLE {table_name}")
 
 
 def select_from_table(query):
-    my_cursor = my_db.cursor()
     my_cursor.execute(query)
-
     return my_cursor.fetchall()
-
-
-
-
-# drop_table("next_of_kin")
-# drop_table("visitor")
-#
-# create_visitor_table()
-# create_nok_table()
-#
-# query = "INSERT INTO visitor ( name ,surname ,id_number ,phone_number ,is_admin ,logged_in ,time_in ) " \
-#         "VALUES ( 'Luyanda', 'Dingindlela', '9903155793082', '0783820098', 'true', 'true', curtime() );"
-#
-# my_cursor = my_db.cursor()
-# my_cursor.execute(query)
-#
-# my_db.commit()
-# print(read_table("visitor"))
