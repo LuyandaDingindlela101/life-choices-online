@@ -1,3 +1,4 @@
+from datetime import datetime
 from tkinter import *
 from utilities import *
 from tkinter import messagebox
@@ -206,6 +207,21 @@ def cancel():
         window.geometry("1100x500")
 
 
+def display_report():
+    tree_children = tree_view.get_children()
+    count_in = 0
+    count_out = 0
+    for index in range(len(tree_children)):
+        time_in = tree_view.item(tree_children[index])["values"][6]
+        time_out = tree_view.item(tree_children[index])["values"][7]
+        time_in = datetime.strptime(time_in, '%H:%M:%S')
+        time_out = datetime.strptime(time_out, '%H:%M:%S')
+        if time_in > datetime.strptime('00:00:00', '%H:%M:%S'):
+            count_in = count_in + 1
+        if time_out > datetime.strptime('00:00:00', '%H:%M:%S'):
+            count_out
+
+    messagebox.showinfo("Users count", f"{count_in} people have logged in today, and {count_out} people have logged out today.")
 
 
 canvas = Canvas(window, width=450, height=100)
@@ -257,7 +273,7 @@ edit_btn.place(x=10, y=500)
 delete_btn = Button(window, text="DELETE VISITOR", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=delete_row)
 delete_btn.place(x=10, y=550)
 
-report_btn = Button(window, text="DAILY REPORT", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=delete_row)
+report_btn = Button(window, text="DAILY REPORT", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=display_report)
 report_btn.place(x=10, y=600)
 
 logout_btn = Button(window, text="LOG OUT", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=delete_row)
