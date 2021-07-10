@@ -25,7 +25,7 @@ def sign_out():
 def greet_user():
     visitor = select_from_table("SELECT name FROM visitor WHERE logged_in = 1")[0]
     name = visitor[0]
-    message.set("WELCOME BACK " + name.upper() + "!!!")
+    message.set("WELCOME BACK " + name.upper() + "!!")
 
 
 greet_user()

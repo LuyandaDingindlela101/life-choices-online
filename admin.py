@@ -3,11 +3,10 @@ from utilities import *
 from datetime import datetime
 from tkinter import messagebox
 from database_connection import *
-from tkinter.ttk import Style, Treeview
-
+from tkinter.ttk import Style, Treeview, Combobox
 
 window = Tk()
-window.geometry("1100x550")
+window.geometry("1100x1000")
 window.title("Life Choices Online")
 
 
@@ -16,6 +15,10 @@ style = Style()
 #   CHANGE THE BODY FONT
 style.configure("Treeview", highlightthickness=0, bd=0, bg="#fffffff", fieldbackground="#ffffff", fg="#8dc63f", font=('Helvetica', 11))
 style.map("Treeview", background=[("selected", "#8dc63f")])
+
+
+signed_status = StringVar()
+admin_privileges = StringVar()
 
 
 #   FUNCTION WILL POPULATE THE TREEVIEW WITH ALL THE USERS
@@ -28,29 +31,6 @@ def populate_treeview():
     for index in range(len(visitors_list)):
         # CREATE A NEW INSERT INTO THE tree_view WITH EACH ENTRY IN THE DATABASE
         tree_view.insert(parent="", index="end", iid=index, open=True, values=visitors_list[index])
-
-
-#   FUNCTION WILL DELETE AN ENTRY FROM THE DATABASE
-def delete_row():
-    try:
-        permission = messagebox.askquestion("Add new user", "Are you sure you want to continue?")
-
-        if permission == "yes":
-            #   GET THE ID OF THE SELECTED ITEM
-            selected_id = tree_view.focus()
-            #   GET THE ACTUAL ITEMS VALUES
-            visitor = tree_view.item(selected_id, 'values')
-            #   DELETE THE ENTRY IN THE next_of_kin TABLE FIRST BY USING THE visitor_id
-            delete_entry("next_of_kin", "visitor_id", visitor[0])
-            #   DELETE THE ACTUAL visitor
-            delete_entry("visitor", "id", visitor[0])
-            #   REPOPULATE THE TREEVIEW
-            populate_treeview()
-
-    #     IF THE delete_btn IS CLICKED WITHOUT ANY ENTRY SELECTED, TELL THE USER TO CHOOSE AN ENTRY
-    except IndexError:
-        messagebox.showerror("Entry not chosen", "Please select an entry above")
-
 
 def populate_entries():
     try:
@@ -126,47 +106,42 @@ def edit_visitor():
         messagebox.showerror("Entry not chosen", "Please select an entry above")
 
 
-def show_hidden_entries():
-    #   MAKE SPACE FOR THE NEW WIDGETS BY INCREASING THE WINDOWS LENGTH
-    window.geometry("1100x1000")
-    #   PLACE THE WIDGETS SO THEY CAN BE SEEN
-    hr_label.place(x=10, y=500)
-    edit_label.place(x=400, y=550)
-    name_label.place(x=10, y=600)
-    name_entry.place(x=10, y=620)
-    surname_label.place(x=250, y=600)
-    surname_entry.place(x=250, y=620)
-    id_number_label.place(x=500, y=600)
-    id_number_entry.place(x=500, y=620)
-
-    phone_number_label.place(x=750, y=600)
-    phone_number_entry.place(x=750, y=620)
-    nok_label.place(x=400, y=700)
-    nok_name_label.place(x=10, y=750)
-    nok_name_entry.place(x=10, y=780)
-
-    nok_phone_number_label.place(x=250, y=750)
-    nok_phone_number_entry.place(x=250, y=780)
+def create_row():
+    #   CLEAR THE ENTRIES BEFORE UPDATING THERE VALUES
+    clear_entries()
+    cancel_btn.place(x=650, y=750)
+    create_visitor_btn.place(x=350, y=750)
 
 
 #   FUNCTION WILL EDIT A SELECTED ENTRY IN THE DATABASE
 def edit_row():
-    show_hidden_entries()
-    edit_visitor_btn.place(x=10, y=850)
-    cancel_btn.place(x=500, y=850)
-
     #   CALL THE populate_entries FUNCTION TO POPULATE THE ENTRIES WITH THE VISITOR AND NEXT OF KIN DETAILS
     populate_entries()
 
+    cancel_btn.place(x=650, y=750)
+    edit_visitor_btn.place(x=350, y=750)
 
-def create_row():
-    #   CLEAR THE ENTRIES BEFORE UPDATING THERE VALUES
-    clear_entries()
 
-    visitor_id = IntVar
-    show_hidden_entries()
-    create_visitor_btn.place(x=10, y=850)
-    cancel_btn.place(x=500, y=850)
+#   FUNCTION WILL DELETE AN ENTRY FROM THE DATABASE
+def delete_row():
+    try:
+        permission = messagebox.askquestion("Add new user", "Are you sure you want to continue?")
+
+        if permission == "yes":
+            #   GET THE ID OF THE SELECTED ITEM
+            selected_id = tree_view.focus()
+            #   GET THE ACTUAL ITEMS VALUES
+            visitor = tree_view.item(selected_id, 'values')
+            #   DELETE THE ENTRY IN THE next_of_kin TABLE FIRST BY USING THE visitor_id
+            delete_entry("next_of_kin", "visitor_id", visitor[0])
+            #   DELETE THE ACTUAL visitor
+            delete_entry("visitor", "id", visitor[0])
+            #   REPOPULATE THE TREEVIEW
+            populate_treeview()
+
+    #     IF THE delete_btn IS CLICKED WITHOUT ANY ENTRY SELECTED, TELL THE USER TO CHOOSE AN ENTRY
+    except IndexError:
+        messagebox.showerror("Entry not chosen", "Please select an entry above")
 
 
 def add_visitor():
@@ -266,43 +241,72 @@ tree_view.heading("Time Out", text="Time Out", anchor=CENTER)
 populate_treeview()
 tree_view.place(x=10, y=200)
 
-create_btn = Button(window, text="CREATE NEW VISITOR", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=create_row)
+create_btn = Button(window, text="CREATE VISITOR", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=create_row)
 create_btn.place(x=10, y=450)
 
 edit_btn = Button(window, text="EDIT VISITOR", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=edit_row)
-edit_btn.place(x=380, y=450)
+edit_btn.place(x=10, y=500)
 
 delete_btn = Button(window, text="DELETE VISITOR", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=delete_row)
-delete_btn.place(x=775, y=450)
+delete_btn.place(x=10, y=550)
 
-hr_label = Label(window, text="____________________________________________________________________________________________________________________________________________________", fg="#8dc63f")
+report_btn = Button(window, text="DAILY REPORT", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=delete_row)
+report_btn.place(x=10, y=600)
 
-edit_label = Label(window, text="Edit entry!", fg="#8dc63f", font=("Helvetica", 18))
+logout_btn = Button(window, text="LOG OUT", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=delete_row)
+logout_btn.place(x=10, y=650)
+
+
+
+
 
 name_label = Label(window, text="Please enter name!", fg="#8dc63f", font="Helvetica")
+name_label.place(x=350, y=450)
 name_entry = Entry(window)
+name_entry.place(x=350, y=480)
 
 surname_label = Label(window, text="Please enter surname!", fg="#8dc63f", font="Helvetica")
+surname_label.place(x=650, y=450)
 surname_entry = Entry(window)
+surname_entry.place(x=650, y=480)
 
 id_number_label = Label(window, text="Please enter ID Number!", fg="#8dc63f", font="Helvetica")
+id_number_label.place(x=350, y=520)
 id_number_entry = Entry(window)
+id_number_entry.place(x=350, y=550)
 
 phone_number_label = Label(window, text="Please enter phone number!", fg="#8dc63f", font="Helvetica")
+phone_number_label.place(x=650, y=520)
 phone_number_entry = Entry(window)
+phone_number_entry.place(x=650, y=550)
 
-nok_label = Label(window, text="Next of kin details!", fg="#8dc63f", font=("Helvetica", 18))
+admin_label = Label(window, text="Allow admin privilege", fg="#8dc63f", font="Helvetica")
+admin_label.place(x=350, y=590)
+admin_combobox = Combobox(window, textvariable=admin_privileges, state="readonly")
+admin_combobox["values"] = ("Grant", "Revoke")
+admin_combobox.place(x=350, y=620)
 
-nok_name_label = Label(window, text="Please enter name!", fg="#8dc63f", font="Helvetica")
+status_label = Label(window, text="Sign user in / out", fg="#8dc63f", font="Helvetica")
+status_label.place(x=650, y=590)
+status_combobox = Combobox(window, textvariable=signed_status, state="readonly")
+status_combobox["values"] = ("Sign out", "Sign in")
+status_combobox.place(x=650, y=620)
+
+# nok_label = Label(window, text="Next of kin details!", fg="#8dc63f", font=("Helvetica", 18))
+
+nok_name_label = Label(window, text="Please enter next of kin name!", fg="#8dc63f", font="Helvetica")
+nok_name_label.place(x=350, y=690)
 nok_name_entry = Entry(window)
-
+nok_name_entry.place(x=350, y=710)
 nok_phone_number_label = Label(window, text="Please enter phone number!", fg="#8dc63f", font="Helvetica")
+nok_phone_number_label.place(x=650, y=690)
 nok_phone_number_entry = Entry(window)
-
-edit_visitor_btn = Button(window, text="UPDATE VISITOR", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=edit_visitor)
+nok_phone_number_entry.place(x=650, y=710)
 
 create_visitor_btn = Button(window, text="ADD NEW VISITOR", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=add_visitor)
 
+edit_visitor_btn = Button(window, text="UPDATE VISITOR", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=edit_visitor)
 
 cancel_btn = Button(window, text="CANCEL", bg="#8dc63f", fg="#ffffff", borderwidth=0, width=30, command=cancel)
+
 window.mainloop()
