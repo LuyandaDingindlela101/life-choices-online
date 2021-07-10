@@ -26,7 +26,7 @@ def sign_user_in():
             if user_exists(name, id_number):
                 #   IF USER EXISTS, GET THE USER AND CHANGE THEIR logged_in STATUS
                 visitor = select_from_table("SELECT * FROM visitor WHERE name='" + name + "' AND id_number='" + id_number + "';")[0]
-                update_table("UPDATE visitor SET logged_in = 1 WHERE id = " + str(visitor[0]))
+                update_table("UPDATE visitor SET logged_in = 'true' WHERE id = " + str(visitor[0]))
                 messagebox.showinfo("Login successful", "You have successfully logged in")
                 #   DESTROY THE CURRENT WINDOW AND LOG THEM IN
                 window.destroy()

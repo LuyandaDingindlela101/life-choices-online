@@ -39,9 +39,8 @@ def create_nok_table():
 
 
 def insert_visitor(name, surname, id_number, phone_number):
-    #   logged_in WILL HAVE ONLY TWO VALUES: 1 AND 0, 1 MEANS LOGGED IN AND 0 MEANS LOGGED OUT
-    query = "INSERT INTO visitor ( name ,surname ,id_number ,phone_number ,logged_in ,time_in ) " \
-            "VALUES ( '" + name + "', '" + surname + "', '" + id_number + "', '" + phone_number + "', '" + str(1) + "', curtime() );"
+    query = "INSERT INTO visitor ( name ,surname ,id_number ,phone_number ,is_admin ,logged_in ,time_in ) " \
+            "VALUES ( '" + name + "', '" + surname + "', '" + id_number + "', '" + phone_number + "', 'false', 'true', curtime() );"
 
     my_cursor = my_db.cursor()
     my_cursor.execute(query)
@@ -107,3 +106,21 @@ def select_from_table(query):
     my_cursor.execute(query)
 
     return my_cursor.fetchall()
+
+
+
+
+# drop_table("next_of_kin")
+# drop_table("visitor")
+#
+# create_visitor_table()
+# create_nok_table()
+#
+# query = "INSERT INTO visitor ( name ,surname ,id_number ,phone_number ,is_admin ,logged_in ,time_in ) " \
+#         "VALUES ( 'Luyanda', 'Dingindlela', '9903155793082', '0783820098', 'true', 'true', curtime() );"
+#
+# my_cursor = my_db.cursor()
+# my_cursor.execute(query)
+#
+# my_db.commit()
+print(read_table("visitor"))
