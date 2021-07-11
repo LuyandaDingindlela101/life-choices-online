@@ -1,6 +1,4 @@
 from tkinter import END, messagebox
-
-#   FUNCTION CLEARS ALL THE ENTRIES CONTENTS
 from database_connection import select_from_table
 
 
